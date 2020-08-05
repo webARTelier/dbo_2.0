@@ -123,7 +123,7 @@ class Query
     $this->check_empty($placeholder, 'placeholder');
     $this->check_empty($value, 'value');
 
-    $this->and_placeholder = " WHERE " . $placeholder;
+    $this->and_placeholder = " AND " . $placeholder;
     $this->and_value = $value;
     $this->valtypes .= 's';
     return $this;
@@ -136,7 +136,7 @@ class Query
     $this->check_empty($placeholder, 'placeholder');
     $this->check_empty($value, 'value');
 
-    $this->or_placeholder = " WHERE " . $placeholder;
+    $this->or_placeholder = " OR " . $placeholder;
     $this->or_value = $value;
     $this->valtypes .= 's';
     return $this;
