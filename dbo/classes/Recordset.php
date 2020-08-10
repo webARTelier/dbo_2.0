@@ -76,7 +76,7 @@ class Recordset
 
   public function move_next()
   {
-    if ($this->curRow == $this->totalRows) {
+    if ($this->curRow == $this->totalRows - 1) {
       $this->EOF = true;
     }
 

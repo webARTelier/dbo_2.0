@@ -14,24 +14,21 @@ try {
   $rs_test->query
     ->set_table('country')
     ->set_cols('Code, Name')
-    ->set_cond('Code != ?', 'test');
+    ->set_cond('Code != ?', 'test')
+    ->set_order('Code DESC');
   $rs_test->execute('select');
 
 
 
-  //while (!$rs_test->get_EOF()) {}
-
-
-
-  echo '<pre>';
-  print_r($rs_test);
-  echo '</pre>';
+  while (!$rs_test->get_EOF()) {
+    echo '<br>' . $rs_test->get_field('Code');
+    $rs_test->move_next();
+  }
 
 
 
 } catch(customException $e) {
   echo $e->errorMessage();
 }
-
 
 ?>

@@ -165,7 +165,7 @@ class Query
   public function set_order(string $order)
   {
     $this->check_empty($order, 'order');
-    $this->orderby = " ORDER BY " . $orderby;
+    $this->orderby = " ORDER BY " . $order;
     return $this;
   }
 
