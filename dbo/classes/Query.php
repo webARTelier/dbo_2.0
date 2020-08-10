@@ -4,10 +4,9 @@ class Query
 {
   private $structure = '';
 
-  private $valtypes = '';
-  private $select = '';
+  private $valTypes = '';
   private $table =  '';
-  private $from =  '';
+  private $cols = '';
   private $innerjoin = '';
   private $leftjoin = '';
   private $cond_placeholder = '';
@@ -47,13 +46,28 @@ class Query
 
 
 
+  private function check_query()
+  {
+    if(empty($this->table)) {
+      throw new customException('No table set for query!');
+    }
+
+    if (empty($this->cols)) {
+      throw new customException('No columns set for query!');
+    }
+
+    if (empty($this->cond_placeholder)) {
+      throw new customException('No condition set for query!');
+    }
+  }
+
+
+
   public function set_table(string $table)
   {
     $this->check_empty($table, 'table');
     $this->check_table($table);
-
     $this->table = $table;
-    $this->from = "FROM $table";
     return $this;
   }
 
@@ -75,7 +89,7 @@ class Query
       }
     }
 
-    $this->select = "SELECT $cols";
+    $this->cols = $cols;
     return $this;
   }
 
@@ -86,7 +100,6 @@ class Query
     $this->check_empty($table, 'table');
     $this->check_table($table);
     $this->check_empty($on, 'on');
-
     $this->innerjoin .= ' INNER JOIN ' . $table . ' ON ' . $on;
     return $this;
   }
@@ -98,7 +111,6 @@ class Query
     $this->check_empty($table, 'table');
     $this->check_table($table);
     $this->check_empty($on, 'on');
-
     $this->leftjoin .= ' LEFT JOIN ' . $table . ' ON ' . $on;
     return $this;
   }
@@ -109,10 +121,9 @@ class Query
   {
     $this->check_empty($placeholder, 'placeholder');
     $this->check_empty($value, 'value');
-
     $this->cond_placeholder = " WHERE " . $placeholder;
     $this->cond_value = $value;
-    $this->valtypes .= 's';
+    $this->valTypes .= 's';
     return $this;
   }
 
@@ -122,10 +133,9 @@ class Query
   {
     $this->check_empty($placeholder, 'placeholder');
     $this->check_empty($value, 'value');
-
     $this->and_placeholder = " AND " . $placeholder;
-    $this->and_value = $value;
-    $this->valtypes .= 's';
+    $this->and_value[] = $value;
+    $this->valTypes .= 's';
     return $this;
   }
 
@@ -135,10 +145,9 @@ class Query
   {
     $this->check_empty($placeholder, 'placeholder');
     $this->check_empty($value, 'value');
-
-    $this->or_placeholder = " OR " . $placeholder;
-    $this->or_value = $value;
-    $this->valtypes .= 's';
+    $this->or_placeholder .= " OR " . $placeholder;
+    $this->or_value[] = $value;
+    $this->valTypes .= 's';
     return $this;
   }
 
@@ -147,7 +156,6 @@ class Query
   public function set_groupby(string $groupby)
   {
     $this->check_empty($groupby, 'groupby');
-
     $this->groupby = " GROUP BY " . $groupby;
     return $this;
   }
@@ -157,7 +165,6 @@ class Query
   public function set_order(string $order)
   {
     $this->check_empty($order, 'order');
-
     $this->orderby = " ORDER BY " . $orderby;
     return $this;
   }
@@ -167,7 +174,6 @@ class Query
   public function set_limit(string $limit)
   {
     $this->check_empty($limit, 'limit');
-
     $this->limit = " LIMIT " . $limit;
     return $this;
   }
@@ -177,9 +183,68 @@ class Query
   public function set_offset(string $offset)
   {
     $this->check_empty($offset, 'offset');
-
     $this->limit = " OFFSET " . $offset;
     return $this;
+  }
+
+
+
+  public function get_query(string $mode)
+  {
+    $this->check_empty($mode, 'mode');
+    $this->check_query();
+
+    $bind_values = [];
+    $bind_values[] = $this->cond_value;
+
+    foreach ($this->and_value as $and_value) {
+      $bind_values[] = $and_value;
+    }
+
+    foreach ($this->or_value as $or_value) {
+      $bind_values[] = $or_value;
+    }
+
+    switch ($mode) {
+
+      case 'select':
+        $statement = "
+          SELECT $this->cols FROM
+          $this->table
+          $this->innerjoin
+          $this->leftjoin
+          $this->cond_placeholder
+          $this->and_placeholder
+          $this->or_placeholder
+          $this->groupby
+          $this->orderby
+          $this->limit
+          $this->offset
+        ";
+        break;
+
+      case 'count':
+        $statement = "
+          SELECT COUNT(*) as rowCount FROM
+          $this->table
+          $this->innerjoin
+          $this->leftjoin
+          $this->cond_placeholder
+          $this->and_placeholder
+          $this->or_placeholder
+        ";
+        break;
+
+      default:
+        throw new customException('»' . $mode . '« is not a query mode!');
+    }
+
+    return array(
+      'statement'   => $statement,
+      'valTypes'    => $this->valTypes,
+      'values'      => $bind_values,
+      'type'        => $mode
+    );
   }
 }
 
