@@ -42,11 +42,9 @@ class Recordset
   private function execute_query(string $mode)
   {
     $queryData = $this->query->get_query($mode);
-
     $fetch = $this->conn->prepare($queryData['statement']);
     $fetch->bind_param($queryData['valTypes'], ...$queryData['values']);
     $fetch->execute();
-
     $this->recordset = $fetch->get_result()->fetch_all(MYSQLI_ASSOC);
 
     switch ($mode) {
