@@ -6,7 +6,7 @@ class customException extends Exception
   {
     $errorMsg = '<br><strong>' . $this->getMessage() . '</strong><br>';
     $errorMsg .= 'Error occured on line ' . $this->getLine() . ' in ' . $this->getFile() . '<br><br>';
-    $errorMsg .= "Stack Trace:<br>" . $this->getTraceAsString();
+    $errorMsg .= "Stack Trace:<pre>" . $this->getTraceAsString() . '</pre>';
     return $errorMsg;
   }
 }

@@ -13,21 +13,24 @@ try {
   $rs_test = new Recordset($conn, $query, 'select');
   $rs_test->query
     ->set_table('country')
-    ->set_cols('Code, Name')
+    ->set_cols('Code, Region')
     ->set_cond('Code != ?', 'test')
     ->set_order('Code DESC');
   $rs_test->execute('select');
 
-
-
-  while (!$rs_test->get_EOF()) {
-    echo '<br>' . $rs_test->get_field('Code');
-    $rs_test->move_next();
-  }
+  print_r($rs_test->find_rows('Region', 'Middle East'));
 
 
 
-} catch(customException $e) {
+
+  echo '<pre>';
+  print_r($rs_test);
+  echo '</pre>';
+
+
+
+
+} catch (customException $e) {
   echo $e->errorMessage();
 }
 

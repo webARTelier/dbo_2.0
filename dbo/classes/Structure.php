@@ -18,6 +18,34 @@ class Structure
 
 
 
+  // -------------------------------------------------------------------
+
+
+
+  public function check_table(string $table)
+  {
+    if (!in_array($table, $this->tables)) {
+      throw new customException('Table »' . $table . '« does not exist!');
+    }
+  }
+
+
+
+  public function check_columns(string $table, array $columns)
+  {
+    foreach ($columns as $column) {
+      if (!in_array($column, $this->columns[$table])) {
+        throw new customException('Column »' . $column . '« does not exist in table »' . $this->table .'«!');
+      }
+    }
+  }
+
+
+
+  // -------------------------------------------------------------------
+
+
+
   public function get_tables() {
     return $this->tables;
   }
