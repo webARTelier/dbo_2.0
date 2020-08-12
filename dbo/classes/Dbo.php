@@ -4,8 +4,6 @@ class Dbo
 {
   private $conn = '';
   private $structure = '';
-  private $query = '';
-  private $recordset = '';
 
 
 

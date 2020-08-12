@@ -19,7 +19,7 @@ try {
 
 
   echo '<pre>';
-  print_r($rs_test);
+  print_r($dbo);
   echo '</pre>';
   die;
 
