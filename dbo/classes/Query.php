@@ -2,7 +2,7 @@
 
 class Query
 {
-  private $structure = '';
+  public $structure = '';
 
   private $table =  '';
   private $cols = '';

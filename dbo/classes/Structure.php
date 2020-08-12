@@ -2,6 +2,7 @@
 
 class Structure
 {
+  public $conn = '';
   private $tables = [];
   private $columns = [];
 
@@ -9,6 +10,7 @@ class Structure
 
   function __construct(Conn $conn)
   {
+    $this->conn = $conn;
     $this->tables = array_column(mysqli_fetch_all($conn->connDB->query('SHOW TABLES')), 0);
 
     foreach ($this->tables as $table) {
@@ -35,7 +37,7 @@ class Structure
   {
     foreach ($columns as $column) {
       if (!in_array($column, $this->columns[$table])) {
-        throw new customException('Column »' . $column . '« does not exist in table »' . $this->table .'«!');
+        throw new customException('Column »' . $column . '« does not exist in table »' . $table .'«!');
       }
     }
   }

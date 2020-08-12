@@ -15,8 +15,8 @@ class Recordset
 
 
 
-  function __construct(Conn $conn, Query $query, string $mode) {
-    $this->conn = $conn->connDB;
+  function __construct(Query $query) {
+    $this->conn = $query->structure->conn->connDB;
     $this->query = $query;
   }
 
