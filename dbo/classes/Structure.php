@@ -65,9 +65,7 @@ class Structure
 
   public function get_columns(string $table, bool $ID = true)
   {
-    if (empty($table)) {
-      throw new customException('Value for table is empty!');
-    }
+    $this->check_empty($table);
 
     if (array_key_exists($table, $this->columns)) {
       $columns = $this->columns[$table];

@@ -3,7 +3,6 @@
 class Recordset
 {
   private $conn = '';
-  private $structure = '';
   public $query = '';
 
   private $recordset = [];
@@ -19,7 +18,6 @@ class Recordset
   function __construct(Query $query)
   {
     $this->conn = $query->structure->conn;
-    $this->structure = $query->structure;
     $this->query = $query;
   }
 
@@ -75,7 +73,7 @@ class Recordset
 
   public function execute(string $mode)
   {
-    $this->structure->check_empty($mode, 'mode');
+    $this->query->structure->check_empty($mode, 'mode');
     $this->execute_query($mode);
   }
 
@@ -83,12 +81,12 @@ class Recordset
 
   public function execute_custom(string $sql)
   {
-    $this->structure->check_empty($sql, 'SQL query');
+    $this->query->structure->check_empty($sql, 'SQL query');
     $fetch = $this->conn->query($sql)->fetch_all(MYSQLI_ASSOC);
     $this->recordset = $fetch->get_result()->fetch_all(MYSQLI_ASSOC);
     $this->totalRows = $this->conn->affected_rows;
 
-    if ($this->totalRows === 0) {
+    if ($this->totalRows < 1) {
       $this->EOF = true;
     }
   }
@@ -152,27 +150,10 @@ class Recordset
 
 
 
-  public function get_field(string $field)
+  public function get_rows(string $column, string $content)
   {
-    $this->structure->check_empty($field, 'field');
-
-    if ($this->EOF) {
-      throw new customException('EOF true - can not retrieve field »' . $field . '«');
-    }
-
-    if (!array_key_exists($field, $this->recordset[$this->curRow])) {
-      throw new customException('Field »' . $field . '« does not exist in recordset!');
-    }
-
-    return $this->recordset[$this->curRow][$field];
-  }
-
-
-
-  public function find_rows(string $column, string $content)
-  {
-    $this->structure->check_empty($column, 'column');
-    $this->structure->check_empty($content, 'content');
+    $this->query->structure->check_empty($column, 'column');
+    $this->query->structure->check_empty($content, 'content');
 
     if (!array_key_exists($column, $this->recordset[$this->curRow])) {
       throw new customException('Column »' . $column . '« does not exist in recordset!');
@@ -195,6 +176,23 @@ class Recordset
     $this->EOF = $rememberEOF;
 
     return $resultRows;
+  }
+
+
+
+  public function get_field(string $field)
+  {
+    $this->query->structure->check_empty($field, 'field');
+
+    if ($this->EOF) {
+      throw new customException('EOF true - can not retrieve field »' . $field . '«');
+    }
+
+    if (!array_key_exists($field, $this->recordset[$this->curRow])) {
+      throw new customException('Field »' . $field . '« does not exist in recordset!');
+    }
+
+    return $this->recordset[$this->curRow][$field];
   }
 
 
