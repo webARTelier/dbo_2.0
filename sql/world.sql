@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.3
+-- version 4.8.0.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 06. Aug 2020 um 07:02
--- Server-Version: 10.1.36-MariaDB
--- PHP-Version: 7.2.11
+-- Erstellungszeit: 14. Aug 2020 um 12:39
+-- Server-Version: 10.1.32-MariaDB
+-- PHP-Version: 7.2.5
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -21,6 +21,8 @@ SET time_zone = "+00:00";
 --
 -- Datenbank: `world`
 --
+CREATE DATABASE IF NOT EXISTS `world` DEFAULT CHARACTER SET utf8 COLLATE utf8_german2_ci;
+USE `world`;
 
 -- --------------------------------------------------------
 
@@ -28,13 +30,15 @@ SET time_zone = "+00:00";
 -- Tabellenstruktur für Tabelle `city`
 --
 
-CREATE TABLE `city` (
-  `ID` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `city` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
   `Name` char(35) NOT NULL DEFAULT '',
   `CountryCode` char(3) NOT NULL DEFAULT '',
   `District` char(20) NOT NULL DEFAULT '',
-  `Population` int(11) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `Population` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`),
+  KEY `CountryCode` (`CountryCode`)
+) ENGINE=InnoDB AUTO_INCREMENT=4080 DEFAULT CHARSET=utf8mb4;
 
 --
 -- Daten für Tabelle `city`
@@ -4130,7 +4134,7 @@ INSERT INTO `city` (`ID`, `Name`, `CountryCode`, `District`, `Population`) VALUE
 -- Tabellenstruktur für Tabelle `country`
 --
 
-CREATE TABLE `country` (
+CREATE TABLE IF NOT EXISTS `country` (
   `Code` char(3) NOT NULL DEFAULT '',
   `Name` char(52) NOT NULL DEFAULT '',
   `Continent` enum('Asia','Europe','North America','Africa','Oceania','Antarctica','South America') NOT NULL DEFAULT 'Asia',
@@ -4145,7 +4149,8 @@ CREATE TABLE `country` (
   `GovernmentForm` char(45) NOT NULL DEFAULT '',
   `HeadOfState` char(60) DEFAULT NULL,
   `Capital` int(11) DEFAULT NULL,
-  `Code2` char(2) NOT NULL DEFAULT ''
+  `Code2` char(2) NOT NULL DEFAULT '',
+  PRIMARY KEY (`Code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -4399,11 +4404,13 @@ INSERT INTO `country` (`Code`, `Name`, `Continent`, `Region`, `SurfaceArea`, `In
 -- Tabellenstruktur für Tabelle `countrylanguage`
 --
 
-CREATE TABLE `countrylanguage` (
+CREATE TABLE IF NOT EXISTS `countrylanguage` (
   `CountryCode` char(3) NOT NULL DEFAULT '',
   `Language` char(30) NOT NULL DEFAULT '',
   `IsOfficial` enum('T','F') NOT NULL DEFAULT 'F',
-  `Percentage` decimal(4,1) NOT NULL DEFAULT '0.0'
+  `Percentage` decimal(4,1) NOT NULL DEFAULT '0.0',
+  PRIMARY KEY (`CountryCode`,`Language`),
+  KEY `CountryCode` (`CountryCode`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -5396,39 +5403,29 @@ INSERT INTO `countrylanguage` (`CountryCode`, `Language`, `IsOfficial`, `Percent
 ('ZWE', 'Nyanja', 'F', '2.2'),
 ('ZWE', 'Shona', 'F', '72.1');
 
---
--- Indizes der exportierten Tabellen
---
+-- --------------------------------------------------------
 
 --
--- Indizes für die Tabelle `city`
---
-ALTER TABLE `city`
-  ADD PRIMARY KEY (`ID`),
-  ADD KEY `CountryCode` (`CountryCode`);
-
---
--- Indizes für die Tabelle `country`
---
-ALTER TABLE `country`
-  ADD PRIMARY KEY (`Code`);
-
---
--- Indizes für die Tabelle `countrylanguage`
---
-ALTER TABLE `countrylanguage`
-  ADD PRIMARY KEY (`CountryCode`,`Language`),
-  ADD KEY `CountryCode` (`CountryCode`);
-
---
--- AUTO_INCREMENT für exportierte Tabellen
+-- Tabellenstruktur für Tabelle `test_write`
 --
 
+CREATE TABLE IF NOT EXISTS `test_write` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `city` text COLLATE utf8_german2_ci NOT NULL,
+  `country` varchar(150) COLLATE utf8_german2_ci NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_german2_ci;
+
 --
--- AUTO_INCREMENT für Tabelle `city`
+-- Daten für Tabelle `test_write`
 --
-ALTER TABLE `city`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4080;
+
+INSERT INTO `test_write` (`ID`, `city`, `country`) VALUES
+(1, 'Äteritsiputeritsipuolilautatsijänkä', 'Finland'),
+(2, 'Pekwachnamaykoskwaskwaypinwanik', 'Canada'),
+(3, 'Venkatanarasimharajuvaripeta', 'India'),
+(4, 'Göttingen', 'Deutschland'),
+(5, 'Flensburg', 'Deutschland');
 
 --
 -- Constraints der exportierten Tabellen

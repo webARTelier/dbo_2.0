@@ -24,6 +24,15 @@ class Structure
 
 
 
+  public function check_empty($value, string $label)
+  {
+    if (empty($value)) {
+      throw new customException('Value for »' . $label  . '« is empty!');
+    }
+  }
+
+
+
   public function check_table(string $table)
   {
     if (!in_array($table, $this->tables)) {

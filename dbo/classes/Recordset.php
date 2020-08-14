@@ -3,6 +3,7 @@
 class Recordset
 {
   private $conn = '';
+  private $structure = '';
   public $query = '';
 
   private $recordset = [];
@@ -15,22 +16,11 @@ class Recordset
 
 
 
-  function __construct(Query $query) {
-    $this->conn = $query->structure->conn->connDB;
-    $this->query = $query;
-  }
-
-
-
-  // -------------------------------------------------------------------
-
-
-
-  private function check_empty($value, string $label)
+  function __construct(Query $query)
   {
-    if (empty($value)) {
-      throw new customException('Value for »' . $label  . '« is empty!');
-    }
+    $this->conn = $query->structure->conn->connDB;
+    $this->structure = $query->structure;
+    $this->query = $query;
   }
 
 
@@ -85,7 +75,7 @@ class Recordset
 
   public function execute(string $mode)
   {
-    $this->check_empty($mode, 'mode');
+    $this->structure->check_empty($mode, 'mode');
     $this->execute_query($mode);
   }
 
@@ -93,7 +83,7 @@ class Recordset
 
   public function execute_custom(string $sql)
   {
-    $this->check_empty($sql, 'SQL query');
+    $this->structure->check_empty($sql, 'SQL query');
     $fetch = $this->conn->query($sql)->fetch_all(MYSQLI_ASSOC);
     $this->recordset = $fetch->get_result()->fetch_all(MYSQLI_ASSOC);
     $this->totalRows = $this->conn->affected_rows;
@@ -164,7 +154,7 @@ class Recordset
 
   public function get_field(string $field)
   {
-    $this->check_empty($field, 'field');
+    $this->structure->check_empty($field, 'field');
 
     if ($this->EOF) {
       throw new customException('EOF true - can not retrieve field »' . $field . '«');
@@ -181,8 +171,8 @@ class Recordset
 
   public function find_rows(string $column, string $content)
   {
-    $this->check_empty($column, 'column');
-    $this->check_empty($content, 'content');
+    $this->structure->check_empty($column, 'column');
+    $this->structure->check_empty($content, 'content');
 
     if (!array_key_exists($column, $this->recordset[$this->curRow])) {
       throw new customException('Column »' . $column . '« does not exist in recordset!');

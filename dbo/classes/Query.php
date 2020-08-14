@@ -23,22 +23,14 @@ class Query
 
 
 
-  function __construct(Structure $structure) {
+  function __construct(Structure $structure)
+  {
     $this->structure = $structure;
   }
 
 
 
   // -------------------------------------------------------------------
-
-
-
-  private function check_empty($value, string $label)
-  {
-    if (empty($value)) {
-      throw new customException('Value for »' . $label  . '« is empty!');
-    }
-  }
 
 
 
@@ -61,7 +53,7 @@ class Query
 
   public function set_table(string $table)
   {
-    $this->check_empty($table, 'table');
+    $this->structure->check_empty($table, 'table');
     $this->structure->check_table($table);
     $this->table = $table;
     return $this;
@@ -75,7 +67,7 @@ class Query
       throw new customException('No table set - set table before columns!');
     }
 
-    $this->check_empty($cols, 'columns');
+    $this->structure->check_empty($cols, 'columns');
     $this->colsAsArray = explode(',', str_replace(' ', '', $cols));
     $this->structure->check_columns($this->table, $this->colsAsArray);
     $this->cols = $cols;
@@ -86,9 +78,9 @@ class Query
 
   public function set_innerjoin(string $table, string $on)
   {
-    $this->check_empty($table, 'table');
+    $this->structure->check_empty($table, 'table');
+    $this->structure->check_empty($on, 'on');
     $this->structure->check_table($table);
-    $this->check_empty($on, 'on');
     $this->innerjoin .= ' INNER JOIN ' . $table . ' ON ' . $on;
     return $this;
   }
@@ -97,9 +89,9 @@ class Query
 
   public function set_leftjoin(string $table, string $on)
   {
-    $this->check_empty($table, 'table');
+    $this->structure->check_empty($table, 'table');
+    $this->structure->check_empty($on, 'on');
     $this->structure->check_table($table);
-    $this->check_empty($on, 'on');
     $this->leftjoin .= ' LEFT JOIN ' . $table . ' ON ' . $on;
     return $this;
   }
@@ -108,8 +100,8 @@ class Query
 
   public function set_cond(string $placeholder, string $value)
   {
-    $this->check_empty($placeholder, 'placeholder');
-    $this->check_empty($value, 'value');
+    $this->structure->check_empty($placeholder, 'placeholder');
+    $this->structure->check_empty($value, 'value');
     $this->cond_placeholder = " WHERE " . $placeholder;
     $this->cond_value = $value;
     $this->valTypes .= 's';
@@ -120,8 +112,8 @@ class Query
 
   public function set_and(string $placeholder, string $value)
   {
-    $this->check_empty($placeholder, 'placeholder');
-    $this->check_empty($value, 'value');
+    $this->structure->check_empty($placeholder, 'placeholder');
+    $this->structure->check_empty($value, 'value');
     $this->and_placeholder = " AND " . $placeholder;
     $this->and_value[] = $value;
     $this->valTypes .= 's';
@@ -132,8 +124,8 @@ class Query
 
   public function set_or(string $placeholder, string $value)
   {
-    $this->check_empty($placeholder, 'placeholder');
-    $this->check_empty($value, 'value');
+    $this->structure->check_empty($placeholder, 'placeholder');
+    $this->structure->check_empty($value, 'value');
     $this->or_placeholder .= " OR " . $placeholder;
     $this->or_value[] = $value;
     $this->valTypes .= 's';
@@ -144,7 +136,7 @@ class Query
 
   public function set_groupby(string $groupby)
   {
-    $this->check_empty($groupby, 'groupby');
+    $this->structure->check_empty($groupby, 'groupby');
     $this->groupby = " GROUP BY " . $groupby;
     return $this;
   }
@@ -153,7 +145,7 @@ class Query
 
   public function set_order(string $order)
   {
-    $this->check_empty($order, 'order');
+    $this->structure->check_empty($order, 'order');
     $this->orderby = " ORDER BY " . $order;
     return $this;
   }
@@ -162,7 +154,7 @@ class Query
 
   public function set_limit(string $limit)
   {
-    $this->check_empty($limit, 'limit');
+    $this->structure->check_empty($limit, 'limit');
     $this->limit = " LIMIT " . $limit;
     return $this;
   }
@@ -171,7 +163,7 @@ class Query
 
   public function set_offset(string $offset)
   {
-    $this->check_empty($offset, 'offset');
+    $this->structure->check_empty($offset, 'offset');
     $this->limit = " OFFSET " . $offset;
     return $this;
   }
@@ -184,7 +176,7 @@ class Query
 
   public function get_query(string $mode)
   {
-    $this->check_empty($mode, 'mode');
+    $this->structure->check_empty($mode, 'mode');
     $this->check_query();
 
     $bind_values = [];

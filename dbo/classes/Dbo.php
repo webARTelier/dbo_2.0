@@ -19,11 +19,23 @@ class Dbo
 
 
 
+  // -------------------------------------------------------------------
+
+
+
   public function new_recordset()
   {
     $newQuery = new Query($this->structure);
     $newRS = new Recordset($newQuery);
     return $newRS;
+  }
+
+
+
+  public function new_write()
+  {
+    $newWrite = new Write($this->structure);
+    return $newWrite;
   }
 }
 
