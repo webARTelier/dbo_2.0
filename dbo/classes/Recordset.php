@@ -63,7 +63,7 @@ class Recordset
       case 'select':
         $this->totalRows = $this->conn->affected_rows;
 
-        if ($this->totalRows === 0) {
+        if ($this->totalRows < 1) {
           $this->EOF = true;
         }
 
