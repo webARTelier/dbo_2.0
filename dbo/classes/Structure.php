@@ -10,11 +10,11 @@ class Structure
 
   function __construct(Conn $conn)
   {
-    $this->conn = $conn;
-    $this->tables = array_column(mysqli_fetch_all($conn->connDB->query('SHOW TABLES')), 0);
+    $this->conn = $conn->connDB;
+    $this->tables = array_column(mysqli_fetch_all($this->conn->query('SHOW TABLES')), 0);
 
     foreach ($this->tables as $table) {
-      $this->columns[$table] = array_column(mysqli_fetch_all($conn->connDB->query("SHOW COLUMNS FROM $table")), 0);
+      $this->columns[$table] = array_column(mysqli_fetch_all($this->conn->query("SHOW COLUMNS FROM $table")), 0);
     }
   }
 

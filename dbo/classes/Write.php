@@ -21,7 +21,7 @@ class Write
   function __construct(Structure $structure)
   {
     $this->structure = $structure;
-    $this->conn = $this->structure->conn->connDB;
+    $this->conn = $this->structure->conn;
   }
 
 
