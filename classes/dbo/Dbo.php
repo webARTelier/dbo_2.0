@@ -2,7 +2,7 @@
 
 class Dbo
 {
-  private $conn = '';
+  public $conn = '';
   private $structure = '';
 
 

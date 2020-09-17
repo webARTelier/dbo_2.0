@@ -15,7 +15,7 @@ class Recordset
 
 
 
-  function __construct(Query $query)
+  function __construct(Query $query, Pagination $pagination = NULL)
   {
     $this->conn = $query->structure->conn;
     $this->query = $query;
@@ -150,49 +150,9 @@ class Recordset
 
 
 
-  public function get_rows(string $column, string $content)
+  public function get_totalRows()
   {
-    $this->query->structure->check_empty($column, 'column');
-    $this->query->structure->check_empty($content, 'content');
-
-    if (!array_key_exists($column, $this->recordset[$this->curRow])) {
-      throw new customException('Column »' . $column . '« does not exist in recordset!');
-    }
-
-    $rememberCurrow = $this->curRow;
-    $rememberEOF = $this->EOF;
-    $resultRows = false;
-
-    $this->move_first();
-
-    while (!$this->EOF) {
-      if ($this->recordset[$this->curRow][$column] == $content) {
-        $resultRows[] = $this->curRow;
-      }
-      $this->move_next();
-    }
-
-    $this->curRow = $rememberCurrow;
-    $this->EOF = $rememberEOF;
-
-    return $resultRows;
-  }
-
-
-
-  public function get_field(string $field)
-  {
-    $this->query->structure->check_empty($field, 'field');
-
-    if ($this->EOF) {
-      throw new customException('EOF true - can not retrieve field »' . $field . '«');
-    }
-
-    if (!array_key_exists($field, $this->recordset[$this->curRow])) {
-      throw new customException('Field »' . $field . '« does not exist in recordset!');
-    }
-
-    return $this->recordset[$this->curRow][$field];
+    return $this->totalRows;
   }
 
 
@@ -214,6 +174,59 @@ class Recordset
   public function get_EOF()
   {
     return $this->EOF;
+  }
+
+
+
+  public function get_recordset() {
+    return $this->recordset;
+  }
+
+
+
+  public function get_field(string $field)
+  {
+    $this->query->structure->check_empty($field, 'field');
+
+    if ($this->EOF) {
+      throw new customException('EOF true - can not retrieve field ›' . $field . '‹');
+    }
+
+    if (!array_key_exists($field, $this->recordset[$this->curRow])) {
+      throw new customException('Field ›' . $field . '‹ does not exist in recordset!');
+    }
+
+    return $this->recordset[$this->curRow][$field];
+  }
+
+
+
+  public function find_rows(string $column, string $content)
+  {
+    $this->query->structure->check_empty($column, 'column');
+    $this->query->structure->check_empty($content, 'content');
+
+    if (!array_key_exists($column, $this->recordset[$this->curRow])) {
+      throw new customException('Column ›' . $column . '‹ does not exist in recordset!');
+    }
+
+    $rememberCurrow = $this->curRow;
+    $rememberEOF = $this->EOF;
+    $resultRows = false;
+
+    $this->move_first();
+
+    while (!$this->EOF) {
+      if ($this->recordset[$this->curRow][$column] == $content) {
+        $resultRows[] = $this->curRow;
+      }
+      $this->move_next();
+    }
+
+    $this->curRow = $rememberCurrow;
+    $this->EOF = $rememberEOF;
+
+    return $resultRows;
   }
 }
 

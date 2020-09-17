@@ -158,7 +158,7 @@ class Write
       WHERE $condition_column = ?
     ");
 
-    $this->update_valtypes .= 's';  // one more for 'where' value
+    $this->update_valtypes .= 's';  // one more for condition value
     $this->update_values[] = $condition_value;
     $update->bind_param($this->update_valtypes, ...$this->update_values);
     $update->execute();

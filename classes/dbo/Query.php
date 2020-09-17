@@ -113,8 +113,7 @@ class Query
   public function set_and(string $placeholder, string $value)
   {
     $this->structure->check_empty($placeholder, 'placeholder');
-    $this->structure->check_empty($value, 'value');
-    $this->and_placeholder = " AND " . $placeholder;
+    $this->and_placeholder .= " AND " . $placeholder;
     $this->and_value[] = $value;
     $this->valTypes .= 's';
     return $this;
@@ -125,9 +124,8 @@ class Query
   public function set_or(string $placeholder, string $value)
   {
     $this->structure->check_empty($placeholder, 'placeholder');
-    $this->structure->check_empty($value, 'value');
     $this->or_placeholder .= " OR " . $placeholder;
-    $this->or_value[] = $value;
+    $this->or_value[] .= $value;
     $this->valTypes .= 's';
     return $this;
   }
@@ -240,7 +238,7 @@ class Query
 
 
       default:
-        throw new customException('»' . $mode . '« is not a query mode!');
+        throw new customException('›' . $mode . '‹ is not a query mode!');
     }
 
     return array(

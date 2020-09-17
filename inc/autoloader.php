@@ -2,51 +2,21 @@
 
 // autoload general classes
 // ------------------------
-function loadGeneralClasses($class)
+function loadClass($class)
 {
-  $class = 'general/classes/' . str_replace( '..', '', $class . '.php');
+  $mainFolder = 'classes';
+  $subFolders = glob($mainFolder . '/*' , GLOB_ONLYDIR);
 
-  if (file_exists($class)) {
-    require_once $class;
-  } else {
-    return false;
+  foreach ($subFolders as $subFolder) {
+
+    if (file_exists($subFolder . '/' . $class . '.php')) {
+      require_once $subFolder . '/' . $class . '.php';
+    }
   }
 }
 
 
 
-// autoload dbo interfaces
-// -----------------------
-function loadDboInterface($interface)
-{
-  $interface = 'dbo/interfaces/' . str_replace( '..', '', $interface . '.php');
-
-  if (file_exists($interface)) {
-    require_once $interface;
-  } else {
-    return false;
-  }
-}
-
-
-
-// autoload dbo classes
-// --------------------
-function loadDboClass($class)
-{
-  $class = 'dbo/classes/' . str_replace( '..', '', $class . '.php');
-
-  if (file_exists($class)) {
-    require_once $class;
-  } else {
-    return false;
-  }
-}
-
-
-
-spl_autoload_register('loadGeneralClasses');
-spl_autoload_register('loadDboInterface');
-spl_autoload_register('loadDboClass');
+spl_autoload_register('loadClass');
 
 ?>

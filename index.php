@@ -6,7 +6,7 @@ include 'inc/autoloader.php';
 
 
 try {
-  $dbo = new DBO($config['db_access']);
+  $dbo = new Dbo($config['db_access']);
 
 
 
@@ -20,10 +20,6 @@ try {
     ->set_order('Code ASC')
     ->set_limit(10);
   $rs_test->execute('select');
-
-  echo '<pre>';
-  print_r($rs_test);
-  echo '</pre>';
 
 
 
