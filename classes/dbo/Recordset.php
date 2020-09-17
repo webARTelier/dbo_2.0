@@ -4,7 +4,7 @@ class Recordset
 {
   private $conn = '';
   public $query = '';
-  public $pagination = false;
+  public $pagination = '';
 
   private $recordset = [];
   private $totalRows = 0;
@@ -20,6 +20,29 @@ class Recordset
   {
     $this->conn = $query->structure->conn;
     $this->query = $query;
+  }
+
+
+
+  // -------------------------------------------------------------------
+
+
+
+  public function add_pagination(Pagination $pagination, int $curPage = 1)
+  {
+    $this->pagination = $pagination;
+    $this->execute_query('count');
+    $this->pagination->set_totalEntries($this->totalRows);
+    $this->pagination->set_curPage($curPage);
+    $this->query->set_limit($this->pagination->get_limit());
+
+    if (!empty($this->pagination->get_offset())) {
+      $this->query->set_offset($this->pagination->get_offset());
+    }
+
+    $this->totalRows = 0;
+    $this->EOF = false;
+    $this->recordset = [];
   }
 
 
@@ -151,21 +174,6 @@ class Recordset
 
 
 
-  public function add_pagination(Pagination $pagination)
-  {
-    $this->pagination = $pagination;
-    $this->execute_query('count');
-    $this->pagination->set_totalEntries($this->totalRows);
-    $this->query->set_limit($this->pagination->get_limit());
-    $this->query->set_offset($this->pagination->get_offset());
-  }
-
-
-
-  // -------------------------------------------------------------------
-
-
-
   public function get_totalRows()
   {
     return $this->totalRows;
@@ -217,13 +225,13 @@ class Recordset
 
 
 
-  public function find_rows(string $column, string $content)
+  public function find_rows(string $field, string $content)
   {
-    $this->query->structure->check_empty($column, 'column');
+    $this->query->structure->check_empty($field, 'field');
     $this->query->structure->check_empty($content, 'content');
 
-    if (!array_key_exists($column, $this->recordset[$this->curRow])) {
-      throw new customException('Column ›' . $column . '‹ does not exist in recordset!');
+    if (!array_key_exists($field, $this->recordset[$this->curRow])) {
+      throw new customException('Field ›' . $field . '‹ does not exist in recordset!');
     }
 
     $rememberCurrow = $this->curRow;
@@ -233,7 +241,7 @@ class Recordset
     $this->move_first();
 
     while (!$this->EOF) {
-      if ($this->recordset[$this->curRow][$column] == $content) {
+      if ($this->recordset[$this->curRow][$field] == $content) {
         $resultRows[] = $this->curRow;
       }
       $this->move_next();

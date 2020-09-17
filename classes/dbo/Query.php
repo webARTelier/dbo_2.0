@@ -150,7 +150,7 @@ class Query
 
 
 
-  public function set_limit(string $limit)
+  public function set_limit(int $limit)
   {
     $this->structure->check_empty($limit, 'limit');
     $this->limit = " LIMIT " . $limit;
@@ -159,10 +159,10 @@ class Query
 
 
 
-  public function set_offset(string $offset)
+  public function set_offset(int $offset)
   {
     $this->structure->check_empty($offset, 'offset');
-    $this->limit = " OFFSET " . $offset;
+    $this->offset = " OFFSET " . $offset;
     return $this;
   }
 

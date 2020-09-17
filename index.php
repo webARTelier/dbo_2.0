@@ -10,6 +10,14 @@ try {
 
 
 
+  // define current page
+  // -------------------
+  !empty($_GET['page'])
+    ? $page = $_GET['page']
+    : $page = 1;
+
+
+
   // get a recordset
   // ---------------
   $rs_test = $dbo->new_recordset();
@@ -17,9 +25,16 @@ try {
     ->set_table('country')
     ->set_cols('Code, Region')
     ->set_cond('Code != ?', 'test')
-    ->set_order('Code ASC')
-    ->set_limit(10);
+    ->set_order('Code ASC');
+
+  $pagination = new Pagination;
+  $pagination->set_entriesPerPage(5);
+
+  $rs_test->add_pagination($pagination, $page);
   $rs_test->execute('select');
+
+  echo 'Pagination:' . $rs_test->pagination->get_html();
+  echo $rs_test->pagination->get_html_count();
 
 
 
