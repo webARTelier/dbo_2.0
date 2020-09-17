@@ -4,6 +4,7 @@ class Recordset
 {
   private $conn = '';
   public $query = '';
+  public $pagination = false;
 
   private $recordset = [];
   private $totalRows = 0;
@@ -24,6 +25,14 @@ class Recordset
 
 
   // -------------------------------------------------------------------
+
+
+
+  public function execute(string $mode)
+  {
+    $this->query->structure->check_empty($mode, 'mode');
+    $this->execute_query($mode);
+  }
 
 
 
@@ -67,14 +76,6 @@ class Recordset
 
         break;
     }
-  }
-
-
-
-  public function execute(string $mode)
-  {
-    $this->query->structure->check_empty($mode, 'mode');
-    $this->execute_query($mode);
   }
 
 
@@ -142,6 +143,21 @@ class Recordset
     if ($this->totalRows > 0) {
       $this->curRow = $this->totalRows - 1;
     }
+  }
+
+
+
+  // -------------------------------------------------------------------
+
+
+
+  public function add_pagination(Pagination $pagination)
+  {
+    $this->pagination = $pagination;
+    $this->execute_query('count');
+    $this->pagination->set_totalEntries($this->totalRows);
+    $this->query->set_limit($this->pagination->get_limit());
+    $this->query->set_offset($this->pagination->get_offset());
   }
 
 

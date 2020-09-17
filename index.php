@@ -51,10 +51,6 @@ try {
   $write->update($updateData, 'test_write', 'ID', '4');
   $write->store($storeData, 'test_write');
 
-  echo '<pre>';
-  print_r($write);
-  echo '</pre>';
-
 
 
 } catch (customException $e) {

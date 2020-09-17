@@ -2,23 +2,26 @@
 
 class Pagination
 {
-  private $recordset = '';
-
   private $getParam = 'page';
   private $cutLR = 1;
   private $entriesPerPage = 10;
   private $totalEntries = 0;
   private $totalPages = 0;
-  private $currentPage = 1;
+  private $curPage = 1;
   private $html = '';
   private $html_count = '';
 
 
 
-  function __construct(Recordset $recordset)
+  // -------------------------------------------------------------------
+
+
+
+  public function check_empty($value, string $label)
   {
-    $this->recordset = $recordset;
-    $this->totalEntries = $this->recordset->get_totalRows();
+    if (empty($value)) {
+      throw new customException('Value for ›' . $label  . '‹ is empty!');
+    }
   }
 
 
@@ -27,33 +30,50 @@ class Pagination
 
 
 
-  public function set_getParam(string $getParam)
+  public function set_totalEntries(int $totalEntries)
   {
-    if (empty($getParam)) {
-      throw new customException('Value for ›Get parameter‹ is empty!');
-    }
-
-    $this->getParam = $getParam;
+    $this->check_empty($totalEntries);
+    $this->totalEntries = $totalEntries;
+    $this->totalPages = ceil($this->totalEntries / $this->entriesPerPage);
   }
 
 
 
-  public function set_entriesPerPage(int $entriesPerPage)
+  public function set_curPage(int $curPage)
   {
-    if (empty($entriesPerPage)) {
-      throw new customException('Value for ›entries per page‹ is empty!');
+    $this->check_empty($curPage);
+
+    if ($curPage < 1) {
+      $curPage = 1;
     }
 
-    $this->entriesPerPage = $entriesPerPage;
+    if ($curPage > $this->totalPages) {
+      $curPage = $this->totalPages;
+    }
+
+    $this->curPage = $curPage;
+    $this->create_html();
   }
 
 
 
-  // -------------------------------------------------------------------
+  public function get_limit()
+  {
+    return $this->entriesPerPage;
+  }
 
 
 
+  public function get_offset()
+  {
+    if ($this->totalEntries > $this->entriesPerPage) {
+      $offset = $this->entriesPerPage * ($this->curPage - 1);
+    } else {
+      $offset = 0;
+    }
 
+    return $offset;
+  }
 }
 
 ?>
