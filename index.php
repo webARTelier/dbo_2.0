@@ -1,7 +1,14 @@
 <?php
 
 include 'inc/config.inc.php';
-include 'inc/autoloader.php';
+include 'classes/general/autoloader.php';
+
+
+
+$autoloader = new Autoloader();
+$autoloader
+  ->set_baseDir('classes')
+  ->register();
 
 
 
@@ -10,8 +17,8 @@ try {
 
 
 
-  // define current page
-  // -------------------
+  // define current pagination page
+  // ------------------------------
   !empty($_GET['page'])
     ? $page = $_GET['page']
     : $page = 1;
@@ -28,7 +35,7 @@ try {
     ->set_order('Code ASC');
 
   $pagination = new Pagination;
-  $pagination->set_entriesPerPage(5);
+  $pagination->set_entriesPerPage(15);
 
   $rs_test->add_pagination($pagination, $page);
   $rs_test->execute('select');
