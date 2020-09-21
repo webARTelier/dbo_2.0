@@ -67,7 +67,7 @@ class Write
         } elseif (is_float($fieldvalue)) {
           $this->insert_valtypes .= 'd';
         } else {
-          throw new customException('Unknown data format for inserting: ' . $fieldvalue);
+          throw new CustomException('Unknown data format for inserting: ' . $fieldvalue);
         }
       }
 
@@ -82,7 +82,7 @@ class Write
         } elseif (is_float($fieldvalue)) {
           $this->update_valtypes .= 'd';
         } else {
-          throw new customException('Unknown data format for updating: '.$fieldvalue);
+          throw new CustomException('Unknown data format for updating: '.$fieldvalue);
         }
       }
 

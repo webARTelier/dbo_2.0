@@ -22,7 +22,7 @@ class Structure
   public function check_empty($value, string $label)
   {
     if (empty($value)) {
-      throw new customException('Value for ›' . $label  . '‹ is empty!');
+      throw new CustomException('Value for ›' . $label  . '‹ is empty!');
     }
   }
 
@@ -31,7 +31,7 @@ class Structure
   public function check_table(string $table)
   {
     if (!in_array($table, $this->tables)) {
-      throw new customException('Table ›' . $table . '‹ does not exist!');
+      throw new CustomException('Table ›' . $table . '‹ does not exist!');
     }
   }
 
@@ -43,7 +43,7 @@ class Structure
 
     foreach ($queryColumns as $queryColumn) {
       if (!in_array($queryColumn, $dbColumns) && $queryColumn != '*') {
-        throw new customException('Column ›' . $queryColumn . '‹ does not exist in table ›' . $table .'‹!');
+        throw new CustomException('Column ›' . $queryColumn . '‹ does not exist in table ›' . $table .'‹!');
       }
     }
   }

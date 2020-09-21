@@ -147,12 +147,12 @@ class Recordset
   public function move_to(int $row)
   {
     if ($row < 0) {
-      throw new customException('Can not move to negative row!');
+      throw new CustomException('Can not move to negative row!');
     }
 
     if ($row > $this->totalRows - 1)
     {
-      throw new customException(
+      throw new CustomException(
         'Can not move above highest row!<br>Requested row: ' . $row
         . '<br>Total rows: ' . $this->totalRows
       );
@@ -213,11 +213,11 @@ class Recordset
     $this->query->structure->check_empty($field, 'field');
 
     if ($this->EOF) {
-      throw new customException('EOF true - can not retrieve field ›' . $field . '‹');
+      throw new CustomException('EOF true - can not retrieve field ›' . $field . '‹');
     }
 
     if (!array_key_exists($field, $this->recordset[$this->curRow])) {
-      throw new customException('Field ›' . $field . '‹ does not exist in recordset!');
+      throw new CustomException('Field ›' . $field . '‹ does not exist in recordset!');
     }
 
     return $this->recordset[$this->curRow][$field];
@@ -231,7 +231,7 @@ class Recordset
     $this->query->structure->check_empty($content, 'content');
 
     if (!array_key_exists($field, $this->recordset[$this->curRow])) {
-      throw new customException('Field ›' . $field . '‹ does not exist in recordset!');
+      throw new CustomException('Field ›' . $field . '‹ does not exist in recordset!');
     }
 
     $rememberCurrow = $this->curRow;

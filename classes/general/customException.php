@@ -1,6 +1,6 @@
 <?php
 
-class customException extends Exception
+class CustomException extends Exception
 {
   public function errorMessage()
   {

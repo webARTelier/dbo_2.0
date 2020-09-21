@@ -37,11 +37,11 @@ class Query
   private function check_query()
   {
     if (empty($this->table)) {
-      throw new customException('No table set for query!');
+      throw new CustomException('No table set for query!');
     }
 
     if (empty($this->cols)) {
-      throw new customException('No columns set for query!');
+      throw new CustomException('No columns set for query!');
     }
   }
 
@@ -64,7 +64,7 @@ class Query
   public function set_cols(string $cols)
   {
     if (empty($this->table)) {
-      throw new customException('No table set - set table before columns!');
+      throw new CustomException('No table set - set table before columns!');
     }
 
     $this->structure->check_empty($cols, 'columns');
@@ -207,7 +207,7 @@ class Query
 
       case 'min':
         if (count($this->colsAsArray) > 1) {
-          throw new customException('Too many columns (exactly 1 expected)');
+          throw new CustomException('Too many columns (exactly 1 expected)');
         }
 
         $statement = "SELECT MIN($this->cols) AS min FROM $statementParams";
@@ -217,7 +217,7 @@ class Query
 
       case 'max':
         if (count($this->colsAsArray) > 1) {
-          throw new customException('Too many columns (exactly 1 expected)');
+          throw new CustomException('Too many columns (exactly 1 expected)');
         }
 
         $statement = "SELECT MAX($this->cols) AS max FROM $statementParams";
@@ -238,7 +238,7 @@ class Query
 
 
       default:
-        throw new customException('›' . $mode . '‹ is not a query mode!');
+        throw new CustomException('›' . $mode . '‹ is not a query mode!');
     }
 
     return array(

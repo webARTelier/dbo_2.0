@@ -75,7 +75,7 @@ try {
 
 
 
-} catch (customException $e) {
+} catch (CustomException $e) {
   echo $e->errorMessage();
 }
 
