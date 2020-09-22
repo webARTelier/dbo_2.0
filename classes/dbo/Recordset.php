@@ -31,7 +31,7 @@ class Recordset
   public function add_pagination(Pagination $pagination, int $curPage = 1)
   {
     $this->pagination = $pagination;
-    $this->execute_query('count');
+    $this->execute('count');
     $this->pagination->set_totalEntries($this->totalRows);
     $this->pagination->set_curPage($curPage);
     $this->query->set_limit($this->pagination->get_limit());
@@ -54,13 +54,6 @@ class Recordset
   public function execute(string $mode)
   {
     $this->query->structure->check_empty($mode, 'mode');
-    $this->execute_query($mode);
-  }
-
-
-
-  private function execute_query(string $mode)
-  {
     $queryData = $this->query->get_query($mode);
     $fetch = $this->conn->prepare($queryData['statement']);
     $fetch->bind_param($queryData['valTypes'], ...$queryData['values']);
