@@ -206,7 +206,7 @@ class Recordset
     $this->query->structure->check_empty($field, 'field');
 
     if ($this->EOF) {
-      throw new CustomException('EOF true - can not retrieve field ›' . $field . '‹');
+      throw new CustomException('EOF true - can not get field ›' . $field . '‹');
     }
 
     if (!array_key_exists($field, $this->recordset[$this->curRow])) {
@@ -227,9 +227,9 @@ class Recordset
       throw new CustomException('Field ›' . $field . '‹ does not exist in recordset!');
     }
 
+    $resultRows = false;
     $rememberCurrow = $this->curRow;
     $rememberEOF = $this->EOF;
-    $resultRows = false;
 
     $this->move_first();
 
