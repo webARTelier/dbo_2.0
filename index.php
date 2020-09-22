@@ -17,14 +17,6 @@ try {
 
 
 
-  // define current pagination page
-  // ------------------------------
-  !empty($_GET['page'])
-    ? $page = $_GET['page']
-    : $page = 1;
-
-
-
   // get a recordset
   // ---------------
   $rs_test = $dbo->new_recordset();
@@ -33,6 +25,12 @@ try {
     ->set_cols('Code, Region')
     ->set_cond('Code != ?', 'test')
     ->set_order('Code ASC');
+
+  // prepare and init pagination
+  // ---------------------------
+  !empty(intval($_GET['page']))
+    ? $page = intval($_GET['page'])
+    : $page = 1;
 
   $pagination = new Pagination;
   $pagination->set_entriesPerPage(15);
