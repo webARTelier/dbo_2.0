@@ -28,7 +28,7 @@ try {
 
   // prepare and init pagination
   // ---------------------------
-  !empty(intval($_GET['page']))
+  !empty($_GET['page'])
     ? $page = intval($_GET['page'])
     : $page = 1;
 
