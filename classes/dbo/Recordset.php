@@ -31,7 +31,7 @@ class Recordset
   public function add_pagination(Pagination $pagination, int $curPage = 1)
   {
     $this->pagination = $pagination;
-    $this->execute('count');
+    $this->execute_query('count');
     $this->pagination->set_totalEntries($this->totalRows);
     $this->pagination->set_curPage($curPage);
     $this->query->set_limit($this->pagination->get_limit());
@@ -53,7 +53,14 @@ class Recordset
 
   public function execute(string $mode)
   {
-    $this->query->structure->check_empty($mode, 'mode');
+   Check::empty($mode, 'mode');
+    $this->execute_query($mode);
+  }
+
+
+
+  private function execute_query(string $mode)
+  {
     $queryData = $this->query->get_query($mode);
     $fetch = $this->conn->prepare($queryData['statement']);
     $fetch->bind_param($queryData['valTypes'], ...$queryData['values']);
@@ -98,7 +105,7 @@ class Recordset
 
   public function execute_custom(string $sql)
   {
-    $this->query->structure->check_empty($sql, 'SQL query');
+    Check::empty($sql, 'SQL query');
     $fetch = $this->conn->query($sql)->fetch_all(MYSQLI_ASSOC);
     $this->recordset = $fetch->get_result()->fetch_all(MYSQLI_ASSOC);
     $this->totalRows = $this->conn->affected_rows;
@@ -140,12 +147,12 @@ class Recordset
   public function move_to(int $row)
   {
     if ($row < 0) {
-      throw new CustomException('Can not move to negative row!');
+      throw new customException('Can not move to negative row!');
     }
 
     if ($row > $this->totalRows - 1)
     {
-      throw new CustomException(
+      throw new customException(
         'Can not move above highest row!<br>Requested row: ' . $row
         . '<br>Total rows: ' . $this->totalRows
       );
@@ -203,14 +210,14 @@ class Recordset
 
   public function get_field(string $field)
   {
-    $this->query->structure->check_empty($field, 'field');
+    Check::empty($field, 'field');
 
     if ($this->EOF) {
-      throw new CustomException('EOF true - can not get field ›' . $field . '‹');
+      throw new customException('EOF true - can not retrieve field ›' . $field . '‹');
     }
 
     if (!array_key_exists($field, $this->recordset[$this->curRow])) {
-      throw new CustomException('Field ›' . $field . '‹ does not exist in recordset!');
+      throw new customException('Field ›' . $field . '‹ does not exist in recordset!');
     }
 
     return $this->recordset[$this->curRow][$field];
@@ -220,16 +227,16 @@ class Recordset
 
   public function find_rows(string $field, string $content)
   {
-    $this->query->structure->check_empty($field, 'field');
-    $this->query->structure->check_empty($content, 'content');
+    Check::empty($field, 'field');
+    Check::empty($content, 'content');
 
     if (!array_key_exists($field, $this->recordset[$this->curRow])) {
-      throw new CustomException('Field ›' . $field . '‹ does not exist in recordset!');
+      throw new customException('Field ›' . $field . '‹ does not exist in recordset!');
     }
 
-    $resultRows = false;
     $rememberCurrow = $this->curRow;
     $rememberEOF = $this->EOF;
+    $resultRows = false;
 
     $this->move_first();
 

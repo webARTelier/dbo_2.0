@@ -37,11 +37,11 @@ class Query
   private function check_query()
   {
     if (empty($this->table)) {
-      throw new CustomException('No table set for query!');
+      throw new customException('No table set for query!');
     }
 
     if (empty($this->cols)) {
-      throw new CustomException('No columns set for query!');
+      throw new customException('No columns set for query!');
     }
   }
 
@@ -53,7 +53,7 @@ class Query
 
   public function set_table(string $table)
   {
-    $this->structure->check_empty($table, 'table');
+    Check::empty($table, 'table');
     $this->structure->check_table($table);
     $this->table = $table;
     return $this;
@@ -64,10 +64,10 @@ class Query
   public function set_cols(string $cols)
   {
     if (empty($this->table)) {
-      throw new CustomException('No table set - set table before columns!');
+      throw new customException('No table set - set table before columns!');
     }
 
-    $this->structure->check_empty($cols, 'columns');
+    Check::empty($cols, 'columns');
     $this->colsAsArray = explode(',', str_replace(' ', '', $cols));
     $this->structure->check_columns($this->table, $this->colsAsArray);
     $this->cols = $cols;
@@ -78,8 +78,8 @@ class Query
 
   public function set_innerjoin(string $table, string $on)
   {
-    $this->structure->check_empty($table, 'table');
-    $this->structure->check_empty($on, 'on');
+    Check::empty($table, 'table');
+    Check::empty($on, 'on');
     $this->structure->check_table($table);
     $this->innerjoin .= ' INNER JOIN ' . $table . ' ON ' . $on;
     return $this;
@@ -89,8 +89,8 @@ class Query
 
   public function set_leftjoin(string $table, string $on)
   {
-    $this->structure->check_empty($table, 'table');
-    $this->structure->check_empty($on, 'on');
+    Check::empty($table, 'table');
+    Check::empty($on, 'on');
     $this->structure->check_table($table);
     $this->leftjoin .= ' LEFT JOIN ' . $table . ' ON ' . $on;
     return $this;
@@ -100,8 +100,8 @@ class Query
 
   public function set_cond(string $placeholder, string $value)
   {
-    $this->structure->check_empty($placeholder, 'placeholder');
-    $this->structure->check_empty($value, 'value');
+    Check::empty($placeholder, 'placeholder');
+    Check::empty($value, 'value');
     $this->cond_placeholder = " WHERE " . $placeholder;
     $this->cond_value = $value;
     $this->valTypes .= 's';
@@ -112,7 +112,7 @@ class Query
 
   public function set_and(string $placeholder, string $value)
   {
-    $this->structure->check_empty($placeholder, 'placeholder');
+    Check::empty($placeholder, 'placeholder');
     $this->and_placeholder .= " AND " . $placeholder;
     $this->and_value[] = $value;
     $this->valTypes .= 's';
@@ -123,7 +123,7 @@ class Query
 
   public function set_or(string $placeholder, string $value)
   {
-    $this->structure->check_empty($placeholder, 'placeholder');
+    Check::empty($placeholder, 'placeholder');
     $this->or_placeholder .= " OR " . $placeholder;
     $this->or_value[] .= $value;
     $this->valTypes .= 's';
@@ -134,7 +134,7 @@ class Query
 
   public function set_groupby(string $groupby)
   {
-    $this->structure->check_empty($groupby, 'groupby');
+    Check::empty($groupby, 'groupby');
     $this->groupby = " GROUP BY " . $groupby;
     return $this;
   }
@@ -143,7 +143,7 @@ class Query
 
   public function set_order(string $order)
   {
-    $this->structure->check_empty($order, 'order');
+    Check::empty($order, 'order');
     $this->orderby = " ORDER BY " . $order;
     return $this;
   }
@@ -152,7 +152,7 @@ class Query
 
   public function set_limit(int $limit)
   {
-    $this->structure->check_empty($limit, 'limit');
+    Check::empty($limit, 'limit');
     $this->limit = " LIMIT " . $limit;
     return $this;
   }
@@ -161,7 +161,7 @@ class Query
 
   public function set_offset(int $offset)
   {
-    $this->structure->check_empty($offset, 'offset');
+    Check::empty($offset, 'offset');
     $this->offset = " OFFSET " . $offset;
     return $this;
   }
@@ -174,7 +174,7 @@ class Query
 
   public function get_query(string $mode)
   {
-    $this->structure->check_empty($mode, 'mode');
+    Check::empty($mode, 'mode');
     $this->check_query();
 
     $bind_values = [];
@@ -207,7 +207,7 @@ class Query
 
       case 'min':
         if (count($this->colsAsArray) > 1) {
-          throw new CustomException('Too many columns (exactly 1 expected)');
+          throw new customException('Too many columns (exactly 1 expected)');
         }
 
         $statement = "SELECT MIN($this->cols) AS min FROM $statementParams";
@@ -217,7 +217,7 @@ class Query
 
       case 'max':
         if (count($this->colsAsArray) > 1) {
-          throw new CustomException('Too many columns (exactly 1 expected)');
+          throw new customException('Too many columns (exactly 1 expected)');
         }
 
         $statement = "SELECT MAX($this->cols) AS max FROM $statementParams";
@@ -238,7 +238,7 @@ class Query
 
 
       default:
-        throw new CustomException('›' . $mode . '‹ is not a query mode!');
+        throw new customException('›' . $mode . '‹ is not a query mode!');
     }
 
     return array(

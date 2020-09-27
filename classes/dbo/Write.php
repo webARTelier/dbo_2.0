@@ -67,7 +67,7 @@ class Write
         } elseif (is_float($fieldvalue)) {
           $this->insert_valtypes .= 'd';
         } else {
-          throw new CustomException('Unknown data format for inserting: ' . $fieldvalue);
+          throw new customException('Unknown data format for inserting: ' . $fieldvalue);
         }
       }
 
@@ -82,7 +82,7 @@ class Write
         } elseif (is_float($fieldvalue)) {
           $this->update_valtypes .= 'd';
         } else {
-          throw new CustomException('Unknown data format for updating: '.$fieldvalue);
+          throw new customException('Unknown data format for updating: '.$fieldvalue);
         }
       }
 
@@ -98,8 +98,8 @@ class Write
 
   public function store(array $data, string $table)
   {
-    $this->structure->check_empty($data, 'data array');
-    $this->structure->check_empty($table, 'table');
+    Check::empty($data, 'data array');
+    Check::empty($table, 'table');
     $this->structure->check_table($table);
     $this->structure->check_columns($table, array_keys($data));
 
@@ -114,8 +114,8 @@ class Write
 
   public function insert($data, string $table)
   {
-    $this->structure->check_empty($data, 'data array');
-    $this->structure->check_empty($table, 'table');
+    Check::empty($data, 'data array');
+    Check::empty($table, 'table');
     $this->structure->check_table($table);
     $this->structure->check_columns($table, array_keys($data));
 
@@ -142,10 +142,10 @@ class Write
     string $condition_column,
     string $condition_value)
   {
-    $this->structure->check_empty($data, 'data array');
-    $this->structure->check_empty($table, 'table');
-    $this->structure->check_empty($condition_column, 'condition column');
-    $this->structure->check_empty($condition_value, 'condition value');
+    Check::empty($data, 'data array');
+    Check::empty($table, 'table');
+    Check::empty($condition_column, 'condition column');
+    Check::empty($condition_value, 'condition value');
     $this->structure->check_table($table);
     $this->structure->check_columns($table, array_keys($data));
 
@@ -170,9 +170,9 @@ class Write
 
   public function delete_row(string $table, int $ID)
   {
-    $this->structure->check_empty($table, 'table');
+    Check::empty($table, 'table');
     $this->structure->check_table($table);
-    $this->structure->check_empty($ID, 'ID');
+    Check::empty($ID, 'ID');
 
     $delete = $this->conn->prepare("
       DELETE FROM $table

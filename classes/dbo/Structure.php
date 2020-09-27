@@ -19,19 +19,10 @@ class Structure
 
 
 
-  public function check_empty($value, string $label)
-  {
-    if (empty($value)) {
-      throw new CustomException('Value for ›' . $label  . '‹ is empty!');
-    }
-  }
-
-
-
   public function check_table(string $table)
   {
     if (!in_array($table, $this->tables)) {
-      throw new CustomException('Table ›' . $table . '‹ does not exist!');
+      throw new customException('Table ›' . $table . '‹ does not exist!');
     }
   }
 
@@ -43,7 +34,7 @@ class Structure
 
     foreach ($queryColumns as $queryColumn) {
       if (!in_array($queryColumn, $dbColumns) && $queryColumn != '*') {
-        throw new CustomException('Column ›' . $queryColumn . '‹ does not exist in table ›' . $table .'‹!');
+        throw new customException('Column ›' . $queryColumn . '‹ does not exist in table ›' . $table .'‹!');
       }
     }
   }
@@ -62,7 +53,7 @@ class Structure
 
   public function get_columns(string $table, bool $ID = true)
   {
-    $this->check_empty($table);
+    Check::empty($table);
     $this->check_table($table);
 
     $columns = array_column(mysqli_fetch_all($this->conn->query("SHOW COLUMNS FROM $table")), 0);
