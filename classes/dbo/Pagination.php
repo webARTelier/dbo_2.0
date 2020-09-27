@@ -17,19 +17,6 @@ class Pagination
 
 
 
-  public function check_empty($value, string $label)
-  {
-    if (empty($value)) {
-      throw new CustomException('Value for ›' . $label  . '‹ is empty!');
-    }
-  }
-
-
-
-  // -------------------------------------------------------------------
-
-
-
   private function render_html()
   {
     if ($this->totalPages > 1) {
@@ -145,7 +132,7 @@ class Pagination
 
   public function set_totalEntries(int $totalEntries)
   {
-    $this->check_empty($totalEntries, 'total entries');
+    Check::empty($totalEntries, 'total entries');
     $this->totalEntries = $totalEntries;
     $this->totalPages = ceil($this->totalEntries / $this->entriesPerPage);
     $this->render_html();
@@ -156,7 +143,7 @@ class Pagination
 
   public function set_curPage(int $curPage)
   {
-    $this->check_empty($curPage, 'current page');
+    Check::empty($curPage, 'current page');
 
     if ($curPage < 1) {
       $curPage = 1;
@@ -175,7 +162,7 @@ class Pagination
 
   public function set_getParam(string $getParam)
   {
-    $this->check_empty($getParam, 'get parameter');
+    Check::empty($getParam, 'get parameter');
     $this->getParam = $getParam;
   }
 
@@ -190,7 +177,7 @@ class Pagination
 
   public function set_entriesPerPage(int $entriesPerPage)
   {
-    $this->check_empty($entriesPerPage, 'entries per page');
+    Check::empty($entriesPerPage, 'entries per page');
     $this->entriesPerPage = $entriesPerPage;
   }
 
