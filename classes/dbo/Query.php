@@ -101,7 +101,6 @@ class Query
   public function set_cond(string $placeholder, string $value)
   {
     Check::empty($placeholder, 'placeholder');
-    Check::empty($value, 'value');
     $this->cond_placeholder = " WHERE " . $placeholder;
     $this->cond_value = $value;
     $this->valTypes .= 's';
