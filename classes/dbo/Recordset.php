@@ -53,7 +53,7 @@ class Recordset
 
   public function execute(string $mode)
   {
-   Check::empty($mode, 'mode');
+   Perform::check_empty($mode, 'mode');
     $this->execute_query($mode);
   }
 
@@ -105,7 +105,7 @@ class Recordset
 
   public function execute_custom(string $sql)
   {
-    Check::empty($sql, 'SQL query');
+    Perform::check_empty($sql, 'SQL query');
     $fetch = $this->conn->query($sql)->fetch_all(MYSQLI_ASSOC);
     $this->recordset = $fetch->get_result()->fetch_all(MYSQLI_ASSOC);
     $this->totalRows = $this->conn->affected_rows;
@@ -210,7 +210,7 @@ class Recordset
 
   public function get_field(string $field)
   {
-    Check::empty($field, 'field');
+    Perform::check_empty($field, 'field');
 
     if ($this->EOF) {
       throw new customException('EOF true - can not retrieve field ›' . $field . '‹');
@@ -227,8 +227,8 @@ class Recordset
 
   public function find_rows(string $field, string $content)
   {
-    Check::empty($field, 'field');
-    Check::empty($content, 'content');
+    Perform::check_empty($field, 'field');
+    Perform::check_empty($content, 'content');
 
     if (!array_key_exists($field, $this->recordset[$this->curRow])) {
       throw new customException('Field ›' . $field . '‹ does not exist in recordset!');

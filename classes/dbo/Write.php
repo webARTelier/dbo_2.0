@@ -98,8 +98,8 @@ class Write
 
   public function store(array $data, string $table)
   {
-    Check::empty($data, 'data array');
-    Check::empty($table, 'table');
+    Perform::check_empty($data, 'data array');
+    Perform::check_empty($table, 'table');
     $this->structure->check_table($table);
     $this->structure->check_columns($table, array_keys($data));
 
@@ -114,8 +114,8 @@ class Write
 
   public function insert($data, string $table)
   {
-    Check::empty($data, 'data array');
-    Check::empty($table, 'table');
+    Perform::check_empty($data, 'data array');
+    Perform::check_empty($table, 'table');
     $this->structure->check_table($table);
     $this->structure->check_columns($table, array_keys($data));
 
@@ -142,10 +142,10 @@ class Write
     string $condition_column,
     string $condition_value)
   {
-    Check::empty($data, 'data array');
-    Check::empty($table, 'table');
-    Check::empty($condition_column, 'condition column');
-    Check::empty($condition_value, 'condition value');
+    Perform::check_empty($data, 'data array');
+    Perform::check_empty($table, 'table');
+    Perform::check_empty($condition_column, 'condition column');
+    Perform::check_empty($condition_value, 'condition value');
     $this->structure->check_table($table);
     $this->structure->check_columns($table, array_keys($data));
 
@@ -170,9 +170,9 @@ class Write
 
   public function delete_row(string $table, int $ID)
   {
-    Check::empty($table, 'table');
+    Perform::check_empty($table, 'table');
     $this->structure->check_table($table);
-    Check::empty($ID, 'ID');
+    Perform::check_empty($ID, 'ID');
 
     $delete = $this->conn->prepare("
       DELETE FROM $table
