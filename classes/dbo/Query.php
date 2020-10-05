@@ -53,7 +53,7 @@ class Query
 
   public function set_table(string $table)
   {
-    Check::empty($table, 'table');
+    Perform::check_empty($table, 'table');
     $this->structure->check_table($table);
     $this->table = $table;
     return $this;
@@ -67,7 +67,7 @@ class Query
       throw new customException('No table set - set table before columns!');
     }
 
-    Check::empty($cols, 'columns');
+    Perform::check_empty($cols, 'columns');
     $this->colsAsArray = explode(',', str_replace(' ', '', $cols));
     $this->structure->check_columns($this->table, $this->colsAsArray);
     $this->cols = $cols;
@@ -78,8 +78,8 @@ class Query
 
   public function set_innerjoin(string $table, string $on)
   {
-    Check::empty($table, 'table');
-    Check::empty($on, 'on');
+    Perform::check_empty($table, 'table');
+    Perform::check_empty($on, 'on');
     $this->structure->check_table($table);
     $this->innerjoin .= ' INNER JOIN ' . $table . ' ON ' . $on;
     return $this;
@@ -89,8 +89,8 @@ class Query
 
   public function set_leftjoin(string $table, string $on)
   {
-    Check::empty($table, 'table');
-    Check::empty($on, 'on');
+    Perform::check_empty($table, 'table');
+    Perform::check_empty($on, 'on');
     $this->structure->check_table($table);
     $this->leftjoin .= ' LEFT JOIN ' . $table . ' ON ' . $on;
     return $this;
@@ -100,7 +100,7 @@ class Query
 
   public function set_cond(string $placeholder, string $value)
   {
-    Check::empty($placeholder, 'placeholder');
+    Perform::check_empty($placeholder, 'placeholder');
     $this->cond_placeholder = " WHERE " . $placeholder;
     $this->cond_value = $value;
     $this->valTypes .= 's';
@@ -111,7 +111,7 @@ class Query
 
   public function set_and(string $placeholder, string $value)
   {
-    Check::empty($placeholder, 'placeholder');
+    Perform::check_empty($placeholder, 'placeholder');
     $this->and_placeholder .= " AND " . $placeholder;
     $this->and_value[] = $value;
     $this->valTypes .= 's';
@@ -122,7 +122,7 @@ class Query
 
   public function set_or(string $placeholder, string $value)
   {
-    Check::empty($placeholder, 'placeholder');
+    Perform::check_empty($placeholder, 'placeholder');
     $this->or_placeholder .= " OR " . $placeholder;
     $this->or_value[] .= $value;
     $this->valTypes .= 's';
@@ -133,7 +133,7 @@ class Query
 
   public function set_groupby(string $groupby)
   {
-    Check::empty($groupby, 'groupby');
+    Perform::check_empty($groupby, 'groupby');
     $this->groupby = " GROUP BY " . $groupby;
     return $this;
   }
@@ -142,7 +142,7 @@ class Query
 
   public function set_order(string $order)
   {
-    Check::empty($order, 'order');
+    Perform::check_empty($order, 'order');
     $this->orderby = " ORDER BY " . $order;
     return $this;
   }
@@ -151,7 +151,7 @@ class Query
 
   public function set_limit(int $limit)
   {
-    Check::empty($limit, 'limit');
+    Perform::check_empty($limit, 'limit');
     $this->limit = " LIMIT " . $limit;
     return $this;
   }
@@ -160,7 +160,7 @@ class Query
 
   public function set_offset(int $offset)
   {
-    Check::empty($offset, 'offset');
+    Perform::check_empty($offset, 'offset');
     $this->offset = " OFFSET " . $offset;
     return $this;
   }
@@ -173,7 +173,7 @@ class Query
 
   public function get_query(string $mode)
   {
-    Check::empty($mode, 'mode');
+    Perform::check_empty($mode, 'mode');
     $this->check_query();
 
     $bind_values = [];

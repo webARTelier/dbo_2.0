@@ -132,7 +132,7 @@ class Pagination
 
   public function set_totalEntries(int $totalEntries)
   {
-    Check::empty($totalEntries, 'total entries');
+    Perform::check_empty($totalEntries, 'total entries');
     $this->totalEntries = $totalEntries;
     $this->totalPages = ceil($this->totalEntries / $this->entriesPerPage);
     $this->render_html();
@@ -143,7 +143,7 @@ class Pagination
 
   public function set_curPage(int $curPage)
   {
-    Check::empty($curPage, 'current page');
+    Perform::check_empty($curPage, 'current page');
 
     if ($curPage < 1) {
       $curPage = 1;
@@ -162,7 +162,7 @@ class Pagination
 
   public function set_getParam(string $getParam)
   {
-    Check::empty($getParam, 'get parameter');
+    Perform::check_empty($getParam, 'get parameter');
     $this->getParam = $getParam;
   }
 
@@ -177,7 +177,7 @@ class Pagination
 
   public function set_entriesPerPage(int $entriesPerPage)
   {
-    Check::empty($entriesPerPage, 'entries per page');
+    Perform::check_empty($entriesPerPage, 'entries per page');
     $this->entriesPerPage = $entriesPerPage;
   }
 

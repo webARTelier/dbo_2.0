@@ -53,7 +53,7 @@ class Structure
 
   public function get_columns(string $table, bool $ID = true)
   {
-    Check::empty($table);
+    Perform::check_empty($table);
     $this->check_table($table);
 
     $columns = array_column(mysqli_fetch_all($this->conn->query("SHOW COLUMNS FROM $table")), 0);
