@@ -16,7 +16,7 @@ class Recordset
 
 
 
-  function __construct(Query $query, Pagination $pagination = NULL)
+  function __construct(Query $query)
   {
     $this->conn = $query->structure->conn;
     $this->query = $query;
