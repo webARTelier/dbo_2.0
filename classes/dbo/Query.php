@@ -78,7 +78,7 @@ class Query
 
 
 
-  public function setinnerJoin(string $table, string $on)
+  public function setInnerJoin(string $table, string $on)
   {
     Utils::checkNotEmpty($table, 'table');
     Utils::checkNotEmpty($on, 'on');
@@ -90,7 +90,7 @@ class Query
 
 
 
-  public function setleftJoin(string $table, string $on)
+  public function setLeftJoin(string $table, string $on)
   {
     Utils::checkNotEmpty($table, 'table');
     Utils::checkNotEmpty($on, 'on');
@@ -138,7 +138,7 @@ class Query
 
 
 
-  public function setgroupBy(string $groupBy)
+  public function setGroupBy(string $groupBy)
   {
     Utils::checkNotEmpty($groupBy, 'groupBy');
     $this->groupBy = " GROUP BY " . $groupBy;
