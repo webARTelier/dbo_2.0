@@ -1,20 +1,20 @@
 <?php
 
-class Write
+class Storage
 {
   private $structure;
 
-  private $insert_valtypes = '';
+  private $insert_valTypes = '';
   private $insert_fields = '';
   private $insert_values = [];
   private $insert_placeholders = '';
-  private $insert_lastID = '';
+  private $insert_lastID = null;
 
-  private $update_valtypes = '';
+  private $update_valTypes = '';
   private $update_values = [];
   private $update_placeholders = '';
 
-  private $affectedRows = '';
+  private $affectedRows = null;
 
 
 
@@ -30,9 +30,9 @@ class Write
 
 
 
-  private function reset_insert()
+  private function resetInsert()
   {
-    $this->insert_valtypes = '';
+    $this->insert_valTypes = '';
     $this->insert_fields = '';
     $this->insert_values = [];
     $this->insert_placeholders = '';
@@ -40,16 +40,16 @@ class Write
 
 
 
-  private function reset_update()
+  private function resetUpdate()
   {
-    $this->update_valtypes = '';
+    $this->update_valTypes = '';
     $this->update_values = [];
     $this->update_placeholders = '';
   }
 
 
 
-  private function xtract_from_array($method, $data)
+  private function xtractFromArray($method, $data)
   {
     $prefix = '';
 
@@ -61,11 +61,11 @@ class Write
         $this->insert_values[] = $fieldvalue;
 
         if (is_string($fieldvalue)) {
-          $this->insert_valtypes .= 's';
+          $this->insert_valTypes .= 's';
         } elseif (is_int($fieldvalue)) {
-          $this->insert_valtypes .= 'i';
+          $this->insert_valTypes .= 'i';
         } elseif (is_float($fieldvalue)) {
-          $this->insert_valtypes .= 'd';
+          $this->insert_valTypes .= 'd';
         } else {
           throw new customException('Unknown data format for inserting: ' . $fieldvalue);
         }
@@ -76,11 +76,11 @@ class Write
         $this->update_values[] = $fieldvalue;
 
         if (is_string($fieldvalue)) {
-          $this->update_valtypes .= 's';
+          $this->update_valTypes .= 's';
         } elseif (is_int($fieldvalue)) {
-          $this->update_valtypes .= 'i';
+          $this->update_valTypes .= 'i';
         } elseif (is_float($fieldvalue)) {
-          $this->update_valtypes .= 'd';
+          $this->update_valTypes .= 'd';
         } else {
           throw new customException('Unknown data format for updating: '.$fieldvalue);
         }
@@ -98,10 +98,10 @@ class Write
 
   public function store(array $data, string $table)
   {
-    Perform::check_empty($data, 'data array');
-    Perform::check_empty($table, 'table');
-    $this->structure->check_table($table);
-    $this->structure->check_columns($table, array_keys($data));
+    Utils::checkNotEmpty($data, 'data array');
+    Utils::checkNotEmpty($table, 'table');
+    $this->structure->checkTableExists($table);
+    $this->structure->checkColumnsExist($table, array_keys($data));
 
     if (!empty($data['ID'])) {
       $this->update($data, $table, 'ID', $data['ID']);
@@ -114,20 +114,20 @@ class Write
 
   public function insert($data, string $table)
   {
-    Perform::check_empty($data, 'data array');
-    Perform::check_empty($table, 'table');
-    $this->structure->check_table($table);
-    $this->structure->check_columns($table, array_keys($data));
+    Utils::checkNotEmpty($data, 'data array');
+    Utils::checkNotEmpty($table, 'table');
+    $this->structure->checkTableExists($table);
+    $this->structure->checkColumnsExist($table, array_keys($data));
 
-    $this->reset_insert();
-    $this->xtract_from_array('insert', $data);
+    $this->resetInsert();
+    $this->xtractFromArray('insert', $data);
 
     $insert = $this->conn->prepare("
       INSERT INTO $table ($this->insert_fields)
       VALUES ($this->insert_placeholders)
     ");
 
-    $insert->bind_param($this->insert_valtypes, ...$this->insert_values);
+    $insert->bind_param($this->insert_valTypes, ...$this->insert_values);
     $insert->execute();
 
     $this->affectedRows = $insert->affected_rows;
@@ -142,15 +142,16 @@ class Write
     string $condition_column,
     string $condition_value)
   {
-    Perform::check_empty($data, 'data array');
-    Perform::check_empty($table, 'table');
-    Perform::check_empty($condition_column, 'condition column');
-    Perform::check_empty($condition_value, 'condition value');
-    $this->structure->check_table($table);
-    $this->structure->check_columns($table, array_keys($data));
+    Utils::checkNotEmpty($data, 'data array');
+    Utils::checkNotEmpty($table, 'table');
+    Utils::checkNotEmpty($condition_column, 'condition column');
+    Utils::checkNotEmpty($condition_value, 'condition value');
 
-    $this->reset_update();
-    $this->xtract_from_array('update', $data);
+    $this->structure->checkTableExists($table);
+    $this->structure->checkColumnsExist($table, array_keys($data));
+
+    $this->resetUpdate();
+    $this->xtractFromArray('update', $data);
 
     $update = $this->conn->prepare("
       UPDATE $table
@@ -158,9 +159,9 @@ class Write
       WHERE $condition_column = ?
     ");
 
-    $this->update_valtypes .= 's';  // one more for condition value
+    $this->update_valTypes .= 's';  // one more for condition value
     $this->update_values[] = $condition_value;
-    $update->bind_param($this->update_valtypes, ...$this->update_values);
+    $update->bind_param($this->update_valTypes, ...$this->update_values);
     $update->execute();
 
     $this->affectedRows = $update->affected_rows;
@@ -168,11 +169,11 @@ class Write
 
 
 
-  public function delete_row(string $table, int $ID)
+  public function deleteRow(string $table, int $ID)
   {
-    Perform::check_empty($table, 'table');
-    $this->structure->check_table($table);
-    Perform::check_empty($ID, 'ID');
+    Utils::checkNotEmpty($table, 'table');
+    $this->structure->checkTableExists($table);
+    Utils::checkNotEmpty($ID, 'ID');
 
     $delete = $this->conn->prepare("
       DELETE FROM $table
@@ -191,16 +192,16 @@ class Write
 
 
 
-  public function get_affected()
+  public function getAffectedRows()
   {
-    return $this->affectedRows;
+    return $this->affectedRows ?? false;
   }
 
 
 
-  public function get_lastID()
+  public function getLastID()
   {
-    return $this->insert_lastID;
+    return $this->insert_lastID ?? false;
   }
 }
 

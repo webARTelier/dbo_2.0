@@ -6,15 +6,15 @@ class Autoloader
 
 
 
-  public function set_baseDir(string $baseDir)
+  function __construct(string $baseDir)
   {
     $this->baseDir = $baseDir;
-    return $this;
+    $this->register();
   }
 
 
 
-  public function register()
+  private function register()
   {
     spl_autoload_register(function($class) {
 

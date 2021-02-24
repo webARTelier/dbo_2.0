@@ -1,14 +1,11 @@
 <?php
 
 include 'inc/config.inc.php';
-include 'classes/general/autoloader.php';
+include 'classes/utils/autoloader.php';
 
 
 
-$autoloader = new Autoloader();
-$autoloader
-  ->set_baseDir('classes')
-  ->register();
+$autoloader = new Autoloader('classes');
 
 
 
@@ -19,12 +16,12 @@ try {
 
   // get a recordset
   // ---------------
-  $rs_test = $dbo->new_recordset();
+  $rs_test = $dbo->createNewRecordset();
   $rs_test->query
-    ->set_table('country')
-    ->set_cols('Code, Region')
-    ->set_cond('Code != ?', 'test')
-    ->set_order('Code ASC');
+    ->setTable('country')
+    ->setCols('Code, Region')
+    ->setCondition('Code != ?', 'test')
+    ->setOrder('Code ASC');
 
   // prepare and init pagination
   // ---------------------------
@@ -33,13 +30,13 @@ try {
     : $page = 1;
 
   $pagination = new Pagination;
-  $pagination->set_entriesPerPage(15);
+  $pagination->setEntriesPerPage(15);
 
-  $rs_test->add_pagination($pagination, $page);
+  $rs_test->addPagination($pagination, $page);
   $rs_test->execute('select');
 
-  echo 'Pagination:' . $rs_test->pagination->get_html();
-  echo $rs_test->pagination->get_html_count();
+  echo 'Pagination:' . $rs_test->pagination->getPaginationHtml();
+  echo $rs_test->pagination->getPaginationCountHtml();
 
 
 
@@ -62,14 +59,14 @@ try {
 
 
 
-  $write = $dbo->new_write();
+  $storage = $dbo->createNewStorage();
 
   foreach ($insertData as $row => $data) {
-    $write->store($data, 'test_write');
+    $storage->store($data, 'test_write');
   }
 
-  $write->update($updateData, 'test_write', 'ID', '4');
-  $write->store($storeData, 'test_write');
+  $storage->update($updateData, 'test_write', 'ID', '4');
+  $storage->store($storeData, 'test_write');
 
 
 

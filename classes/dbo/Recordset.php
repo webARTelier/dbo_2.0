@@ -8,11 +8,11 @@ class Recordset
 
   private $recordset = [];
   private $totalRows = 0;
-  private $curRow = 0;
+  private $currentRow = 0;
   private $EOF = false;
 
-  private $min = false;
-  private $max = false;
+  private $min = null;
+  private $max = null;
 
 
 
@@ -28,16 +28,16 @@ class Recordset
 
 
 
-  public function add_pagination(Pagination $pagination, int $curPage = 1)
+  public function addPagination(Pagination $pagination, int $curPage = 1)
   {
     $this->pagination = $pagination;
-    $this->execute_query('count');
-    $this->pagination->set_totalEntries($this->totalRows);
-    $this->pagination->set_curPage($curPage);
-    $this->query->set_limit($this->pagination->get_limit());
+    $this->execute('count');
+    $this->pagination->setTotalEntries($this->totalRows);
+    $this->pagination->setCurPage($curPage);
+    $this->query->setLimit($this->pagination->getLimit());
 
-    if (!empty($this->pagination->get_offset())) {
-      $this->query->set_offset($this->pagination->get_offset());
+    if (!empty($this->pagination->getOffset())) {
+      $this->query->setOffset($this->pagination->getOffset());
     }
 
     $this->totalRows = 0;
@@ -53,59 +53,63 @@ class Recordset
 
   public function execute(string $mode)
   {
-   Perform::check_empty($mode, 'mode');
-    $this->execute_query($mode);
-  }
+    Utils::checkNotEmpty($mode, 'mode');
 
-
-
-  private function execute_query(string $mode)
-  {
-    $queryData = $this->query->get_query($mode);
+    $queryData = $this->query->getQuery($mode);
     $fetch = $this->conn->prepare($queryData['statement']);
     $fetch->bind_param($queryData['valTypes'], ...$queryData['values']);
     $fetch->execute();
     $this->recordset = $fetch->get_result()->fetch_all(MYSQLI_ASSOC);
 
-    switch ($mode) {
-
-      case 'count':
-        $this->totalRows = $this->recordset[0]['rowCount'];
-        $this->EOF = true;
-        break;
-
-
-
-      case 'min':
-        $this->min = $this->recordset[0]['min'];
-        $this->EOF = true;
-        break;
-
-
-
-      case 'max':
-        $this->max = $this->recordset[0]['max'];
-        $this->EOF = true;
-        break;
-
-
-
-      case 'select':
-        $this->totalRows = $this->conn->affected_rows;
-
-        if ($this->totalRows < 1) {
-          $this->EOF = true;
-        }
-
-        break;
+    try {
+      $methodName = 'execute' . (ucfirst(strtolower($mode)));
+      $this->{$methodName}();
+    } catch (customException $e) {
+      throw new customException($mode . ' is not an execution mode!');
     }
   }
 
 
 
-  public function execute_custom(string $sql)
+  private function executeCount()
   {
-    Perform::check_empty($sql, 'SQL query');
+    $this->totalRows = $this->recordset[0]['rowCount'];
+    $this->EOF = true;
+  }
+
+
+
+  private function executeMin()
+  {
+    $this->min = $this->recordset[0]['min'];
+    $this->EOF = true;
+  }
+
+
+
+  private function executeMax()
+  {
+    $this->max = $this->recordset[0]['max'];
+    $this->EOF = true;
+  }
+
+
+
+  private function executeSelect()
+  {
+    $this->totalRows = $this->conn->affected_rows;
+
+    if ($this->totalRows < 1) {
+      $this->EOF = true;
+    }
+  }
+
+
+
+  public function executeCustom(string $sql)
+  {
+    Utils::checkNotEmpty($sql, 'SQL query');
+
     $fetch = $this->conn->query($sql)->fetch_all(MYSQLI_ASSOC);
     $this->recordset = $fetch->get_result()->fetch_all(MYSQLI_ASSOC);
     $this->totalRows = $this->conn->affected_rows;
@@ -121,39 +125,39 @@ class Recordset
 
 
 
-  public function move_first()
+  public function moveFirst()
   {
     if ($this->totalRows > 0) {
-      $this->curRow = 0;
+      $this->currentRow = 0;
       $this->EOF = false;
     }
   }
 
 
 
-  public function move_next()
+  public function moveNext()
   {
-    if ($this->curRow == $this->totalRows - 1) {
+    if ($this->currentRow == $this->totalRows - 1) {
       $this->EOF = true;
     }
 
     if (!$this->EOF) {
-      $this->curRow++;
+      $this->currentRow++;
     }
   }
 
 
 
-  public function move_to(int $row)
+  public function moveTo(int $row)
   {
     if ($row < 0) {
       throw new customException('Can not move to negative row!');
     }
 
-    if ($row > $this->totalRows - 1)
-    {
+    if ($row > $this->totalRows - 1) {
       throw new customException(
-        'Can not move above highest row!<br>Requested row: ' . $row
+        'Can not move above highest row!
+        <br>Requested row: ' . $row
         . '<br>Total rows: ' . $this->totalRows
       );
     }
@@ -161,10 +165,10 @@ class Recordset
 
 
 
-  public function move_last()
+  public function moveLast()
   {
     if ($this->totalRows > 0) {
-      $this->curRow = $this->totalRows - 1;
+      $this->currentRow = $this->totalRows - 1;
     }
   }
 
@@ -174,80 +178,80 @@ class Recordset
 
 
 
-  public function get_totalRows()
+  public function getTotalRows()
   {
     return $this->totalRows;
   }
 
 
 
-  public function get_min()
+  public function getMin()
   {
-    return $this->min;
+    return $this->min ?? false;
   }
 
 
 
-  public function get_max()
+  public function getMax()
   {
-    return $this->max;
+    return $this->max ?? false;
   }
 
 
 
-  public function get_EOF()
+  public function getEOF()
   {
     return $this->EOF;
   }
 
 
 
-  public function get_recordset() {
+  public function getRecordset() {
     return $this->recordset;
   }
 
 
 
-  public function get_field(string $field)
+  public function getField(string $field)
   {
-    Perform::check_empty($field, 'field');
+    Utils::checkNotEmpty($field, 'field');
 
     if ($this->EOF) {
       throw new customException('EOF true - can not retrieve field ›' . $field . '‹');
     }
 
-    if (!array_key_exists($field, $this->recordset[$this->curRow])) {
+    if (!array_key_exists($field, $this->recordset[$this->currentRow])) {
       throw new customException('Field ›' . $field . '‹ does not exist in recordset!');
     }
 
-    return $this->recordset[$this->curRow][$field];
+    return $this->recordset[$this->currentRow][$field];
   }
 
 
 
-  public function find_rows(string $field, string $content)
+  public function findRows(string $field, string $content)
   {
-    Perform::check_empty($field, 'field');
-    Perform::check_empty($content, 'content');
+    Utils::checkNotEmpty($field, 'field');
+    Utils::checkNotEmpty($content, 'content');
 
-    if (!array_key_exists($field, $this->recordset[$this->curRow])) {
+    if (!array_key_exists($field, $this->recordset[$this->currentRow])) {
       throw new customException('Field ›' . $field . '‹ does not exist in recordset!');
     }
 
-    $rememberCurrow = $this->curRow;
+    $rememberCurrentRow = $this->currentRow;
     $rememberEOF = $this->EOF;
     $resultRows = false;
 
-    $this->move_first();
+    $this->moveFirst();
 
     while (!$this->EOF) {
-      if ($this->recordset[$this->curRow][$field] == $content) {
-        $resultRows[] = $this->curRow;
+      if ($this->recordset[$this->currentRow][$field] == $content) {
+        $resultRows[] = $this->currentRow;
       }
-      $this->move_next();
+      $this->moveNext();
     }
 
-    $this->curRow = $rememberCurrow;
+    $this->currentRow = $rememberCurrentRow;
     $this->EOF = $rememberEOF;
 
     return $resultRows;

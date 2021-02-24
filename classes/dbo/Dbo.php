@@ -23,7 +23,7 @@ class Dbo
 
 
 
-  public function new_recordset()
+  public function createNewRecordset()
   {
     $newQuery = new Query($this->structure);
     $newRS = new Recordset($newQuery);
@@ -32,10 +32,10 @@ class Dbo
 
 
 
-  public function new_write()
+  public function createNewStorage()
   {
-    $newWrite = new Write($this->structure);
-    return $newWrite;
+    $newStorage = new Storage($this->structure);
+    return $newStorage;
   }
 }
 

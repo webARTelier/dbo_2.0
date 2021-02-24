@@ -19,7 +19,7 @@ class Structure
 
 
 
-  public function check_table(string $table)
+  public function checkTableExists(string $table)
   {
     if (!in_array($table, $this->tables)) {
       throw new customException('Table ›' . $table . '‹ does not exist!');
@@ -28,13 +28,13 @@ class Structure
 
 
 
-  public function check_columns(string $table, array $queryColumns)
+  public function checkColumnsExist(string $table, array $queryColumns)
   {
     $dbColumns = array_column(mysqli_fetch_all($this->conn->query("SHOW COLUMNS FROM $table")), 0);
 
     foreach ($queryColumns as $queryColumn) {
       if (!in_array($queryColumn, $dbColumns) && $queryColumn != '*') {
-        throw new customException('Column ›' . $queryColumn . '‹ does not exist in table ›' . $table .'‹!');
+        throw new customException('Column ›' . $queryColumn . '‹ does not exist in table ›' . $table . '‹!');
       }
     }
   }
@@ -45,22 +45,18 @@ class Structure
 
 
 
-  public function get_tables() {
+  public function getTables() {
     return $this->tables;
   }
 
 
 
-  public function get_columns(string $table, bool $ID = true)
+  public function getColumns(string $table)
   {
-    Perform::check_empty($table);
-    $this->check_table($table);
+    Utils::checkNotEmpty($table);
+    $this->checkTableExists($table);
 
     $columns = array_column(mysqli_fetch_all($this->conn->query("SHOW COLUMNS FROM $table")), 0);
-
-    if(!$ID) {
-      unset($columns['ID']);
-    }
 
     return $columns;
   }

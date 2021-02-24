@@ -17,7 +17,7 @@ class Pagination
 
 
 
-  private function render_html()
+  private function renderHtml()
   {
     if ($this->totalPages > 1) {
 
@@ -105,7 +105,7 @@ class Pagination
 
 
 
-  private function render_html_count()
+  private function renderHtmlCount()
   {
     if ($this->curPage == 1) {
       $from = 1;
@@ -130,20 +130,20 @@ class Pagination
 
 
 
-  public function set_totalEntries(int $totalEntries)
+  public function setTotalEntries(int $totalEntries)
   {
-    Perform::check_empty($totalEntries, 'total entries');
+    Utils::checkNotEmpty($totalEntries, 'total entries');
     $this->totalEntries = $totalEntries;
     $this->totalPages = ceil($this->totalEntries / $this->entriesPerPage);
-    $this->render_html();
-    $this->render_html_count();
+    $this->renderHtml();
+    $this->renderHtmlCount();
   }
 
 
 
-  public function set_curPage(int $curPage)
+  public function setCurPage(int $curPage)
   {
-    Perform::check_empty($curPage, 'current page');
+    Utils::checkNotEmpty($curPage, 'current page');
 
     if ($curPage < 1) {
       $curPage = 1;
@@ -154,43 +154,43 @@ class Pagination
     }
 
     $this->curPage = $curPage;
-    $this->render_html();
-    $this->render_html_count();
+    $this->renderHtml();
+    $this->renderHtmlCount();
   }
 
 
 
-  public function set_getParam(string $getParam)
+  public function setGetParam(string $getParam)
   {
-    Perform::check_empty($getParam, 'get parameter');
+    Utils::checkNotEmpty($getParam, 'get parameter');
     $this->getParam = $getParam;
   }
 
 
 
-  public function set_cutLR(int $cutLR)
+  public function setCutLR(int $cutLR)
   {
     $this->cutLR = $cutLR;
   }
 
 
 
-  public function set_entriesPerPage(int $entriesPerPage)
+  public function setEntriesPerPage(int $entriesPerPage)
   {
-    Perform::check_empty($entriesPerPage, 'entries per page');
+    Utils::checkNotEmpty($entriesPerPage, 'entries per page');
     $this->entriesPerPage = $entriesPerPage;
   }
 
 
 
-  public function get_limit()
+  public function getLimit()
   {
     return $this->entriesPerPage;
   }
 
 
 
-  public function get_offset()
+  public function getOffset()
   {
     if ($this->totalEntries > $this->entriesPerPage) {
       $offset = $this->entriesPerPage * ($this->curPage - 1);
@@ -203,14 +203,14 @@ class Pagination
 
 
 
-  public function get_html()
+  public function getPaginationHtml()
   {
     return $this->html;
   }
 
 
 
-  public function get_html_count()
+  public function getPaginationCountHtml()
   {
     return $this->html_count;
   }
