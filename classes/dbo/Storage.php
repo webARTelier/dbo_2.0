@@ -49,50 +49,70 @@ class Storage
 
 
 
-  private function xtractFromArray($method, $data)
+  private function xtractInsert(array $data)
   {
     $prefix = '';
 
     foreach ($data as $fieldname => $fieldvalue) {
+      $this->insert_fields .= $prefix . $fieldname;
+      $this->insert_placeholders .= $prefix . '?';
+      $this->insert_values[] = $fieldvalue;
 
-      if ($method == 'insert') {
-        $this->insert_fields .= $prefix . $fieldname;
-        $this->insert_placeholders .= $prefix . '?';
-        $this->insert_values[] = $fieldvalue;
+      $prefix = ',';
 
-        if (is_string($fieldvalue)) {
-          $this->insert_valTypes .= 's';
-        } elseif (is_int($fieldvalue)) {
-          $this->insert_valTypes .= 'i';
-        } elseif (is_float($fieldvalue)) {
-          $this->insert_valTypes .= 'd';
-        } else {
-          throw new customException('Unknown data format for inserting: ' . $fieldvalue);
-        }
+      if (is_string($fieldvalue)) {
+        $this->insert_valTypes .= 's';
+        continue;
       }
 
-      else {
-        $this->update_placeholders .= $prefix . $fieldname . "= ?";
-        $this->update_values[] = $fieldvalue;
-
-        if (is_string($fieldvalue)) {
-          $this->update_valTypes .= 's';
-        } elseif (is_int($fieldvalue)) {
-          $this->update_valTypes .= 'i';
-        } elseif (is_float($fieldvalue)) {
-          $this->update_valTypes .= 'd';
-        } else {
-          throw new customException('Unknown data format for updating: '.$fieldvalue);
-        }
+      if (is_int($fieldvalue)) {
+        $this->insert_valTypes .= 'i';
+        continue;
       }
 
-      $prefix = ', ';
+      if (is_float($fieldvalue)) {
+        $this->insert_valTypes .= 'd';
+        continue;
+      }
+
+      throw new customException(
+        'Unknown data format for inserting: ' . $fieldvalue
+      );
     }
   }
 
 
 
-  // -------------------------------------------------------------------
+  private function xtractUpdate(array $data)
+  {
+    $prefix = '';
+
+    foreach ($data as $fieldname => $fieldvalue) {
+      $this->update_placeholders .= $prefix . $fieldname . "= ?";
+      $this->update_values[] = $fieldvalue;
+
+      $prefix = ',';
+
+      if (is_string($fieldvalue)) {
+        $this->update_valTypes .= 's';
+        continue;
+      }
+
+      if (is_int($fieldvalue)) {
+        $this->update_valTypes .= 'i';
+        continue;
+      }
+
+      if (is_float($fieldvalue)) {
+        $this->update_valTypes .= 'd';
+        continue;
+      }
+
+      throw new customException(
+        'Unknown data format for updating: ' . $fieldvalue
+      );
+    }
+  }
 
 
 
@@ -120,7 +140,7 @@ class Storage
     $this->structure->checkColumnsExist($table, array_keys($data));
 
     $this->resetInsert();
-    $this->xtractFromArray('insert', $data);
+    $this->xtractInsert($data);
 
     $insert = $this->conn->prepare("
       INSERT INTO $table ($this->insert_fields)
@@ -140,8 +160,8 @@ class Storage
     array $data,
     string $table,
     string $condition_column,
-    string $condition_value)
-  {
+    string $condition_value
+  ) {
     Utils::checkNotEmpty($data, 'data array');
     Utils::checkNotEmpty($table, 'table');
     Utils::checkNotEmpty($condition_column, 'condition column');
@@ -151,7 +171,7 @@ class Storage
     $this->structure->checkColumnsExist($table, array_keys($data));
 
     $this->resetUpdate();
-    $this->xtractFromArray('update', $data);
+    $this->xtractUpdate($data);
 
     $update = $this->conn->prepare("
       UPDATE $table
@@ -188,10 +208,6 @@ class Storage
 
 
 
-  // -------------------------------------------------------------------
-
-
-
   public function getAffectedRows()
   {
     return $this->affectedRows ?? false;
@@ -204,5 +220,3 @@ class Storage
     return $this->insert_lastID ?? false;
   }
 }
-
-?>

@@ -24,10 +24,6 @@ class Recordset
 
 
 
-  // -------------------------------------------------------------------
-
-
-
   public function addPagination(Pagination $pagination, int $curPage = 1)
   {
     $this->pagination = $pagination;
@@ -44,10 +40,6 @@ class Recordset
     $this->EOF = false;
     $this->recordset = [];
   }
-
-
-
-  // -------------------------------------------------------------------
 
 
 
@@ -121,7 +113,14 @@ class Recordset
 
 
 
-  // -------------------------------------------------------------------
+  private function checkFieldExist(string $field)
+  {
+    if (!array_key_exists($field, $this->recordset[$this->currentRow])) {
+      throw new customException(
+        'Field ›' . $field . '‹ does not exist in recordset!'
+      );
+    }
+  }
 
 
 
@@ -158,7 +157,7 @@ class Recordset
       throw new customException(
         'Can not move above highest row!
         <br>Requested row: ' . $row
-        . '<br>Total rows: ' . $this->totalRows
+          . '<br>Total rows: ' . $this->totalRows
       );
     }
   }
@@ -171,10 +170,6 @@ class Recordset
       $this->currentRow = $this->totalRows - 1;
     }
   }
-
-
-
-  // -------------------------------------------------------------------
 
 
 
@@ -206,7 +201,8 @@ class Recordset
 
 
 
-  public function getRecordset() {
+  public function getRecordset()
+  {
     return $this->recordset;
   }
 
@@ -217,12 +213,12 @@ class Recordset
     Utils::checkNotEmpty($field, 'field');
 
     if ($this->EOF) {
-      throw new customException('EOF true - can not retrieve field ›' . $field . '‹');
+      throw new customException(
+        'EOF true - can not retrieve field ›' . $field . '‹'
+      );
     }
 
-    if (!array_key_exists($field, $this->recordset[$this->currentRow])) {
-      throw new customException('Field ›' . $field . '‹ does not exist in recordset!');
-    }
+    $this->checkFieldExist($field);
 
     return $this->recordset[$this->currentRow][$field];
   }
@@ -233,10 +229,7 @@ class Recordset
   {
     Utils::checkNotEmpty($field, 'field');
     Utils::checkNotEmpty($content, 'content');
-
-    if (!array_key_exists($field, $this->recordset[$this->currentRow])) {
-      throw new customException('Field ›' . $field . '‹ does not exist in recordset!');
-    }
+    $this->checkFieldExist($field);
 
     $rememberCurrentRow = $this->currentRow;
     $rememberEOF = $this->EOF;
@@ -257,5 +250,3 @@ class Recordset
     return $resultRows;
   }
 }
-
-?>

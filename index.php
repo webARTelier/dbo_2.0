@@ -1,6 +1,6 @@
 <?php
 
-include 'inc/config.inc.php';
+include 'inc/config.php';
 include 'classes/utils/autoloader.php';
 
 
@@ -12,16 +12,16 @@ $autoloader = new Autoloader('classes');
 try {
   $dbo = new Dbo($config['db_access']);
 
-
-
   // get a recordset
   // ---------------
-  $rs_test = $dbo->createNewRecordset();
-  $rs_test->query
+  $rs_countries = $dbo->createNewRecordset();
+  $rs_countries->query
     ->setTable('country')
     ->setCols('Code, Region')
     ->setCondition('Code != ?', 'test')
     ->setOrder('Code ASC');
+
+
 
   // prepare and init pagination
   // ---------------------------
@@ -32,30 +32,53 @@ try {
   $pagination = new Pagination;
   $pagination->setEntriesPerPage(15);
 
-  $rs_test->addPagination($pagination, $page);
-  $rs_test->execute('select');
+  $rs_countries->addPagination($pagination, $page);
+  $rs_countries->execute('select');
 
-  echo 'Pagination:' . $rs_test->pagination->getPaginationHtml();
-  echo $rs_test->pagination->getPaginationCountHtml();
-
-
-
-  // -------------------------------------------------------------------
+  echo 'Pagination:' . $rs_countries->pagination->getPaginationHtml();
+  echo $rs_countries->pagination->getPaginationCountHtml();
 
 
 
   // write into db
   // -------------
   $insertData = array(
-    array('city' => 'Äteritsiputeritsipuolilautatsijänkä',  'country' => 'Finland'),
-    array('city' => 'Pekwachnamaykoskwaskwaypinwanik',      'country' => 'Canada'),
-    array('city' => 'Venkatanarasimharajuvaripeta',         'country' => 'India'),
-    array('city' => 'Bovenendvankeelafsnysleegte',          'country' => 'South Africa'),
-    array('city' => 'Mamungkukumpurangkuntjunya',           'country' => 'Australia')
+    array(
+      'city'    => 'Äteritsiputeritsipuolilautatsijänkä',
+      'country' => 'Finland'
+    ),
+    array(
+      'city'    => 'Pekwachnamaykoskwaskwaypinwanik',
+      'country' => 'Canada'
+    ),
+    array(
+      'city'    => 'Venkatanarasimharajuvaripeta',
+      'country' => 'India'
+    ),
+    array(
+      'city'    => 'Bovenendvankeelafsnysleegte',
+      'country' => 'South Africa'
+    ),
+    array(
+      'city'    => 'Mamungkukumpurangkuntjunya',
+      'country' => 'Australia'
+    )
   );
 
-  $updateData = array('city' => 'Göttingen', 'country' => 'Deutschland');
-  $storeData = array('ID' => 5, 'city' => 'Flensburg', 'country' => 'Deutschland');
+
+
+  $updateData = array(
+    'city'    => 'Göttingen',
+    'country' => 'Deutschland'
+  );
+
+
+
+  $storeData = array(
+    'ID'      => 5,
+    'city'    => 'Flensburg',
+    'country' => 'Deutschland'
+  );
 
 
 
@@ -67,11 +90,6 @@ try {
 
   $storage->update($updateData, 'test_write', 'ID', '4');
   $storage->store($storeData, 'test_write');
-
-
-
 } catch (CustomException $e) {
   echo $e->errorMessage();
 }
-
-?>

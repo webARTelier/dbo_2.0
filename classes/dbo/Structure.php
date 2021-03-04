@@ -15,10 +15,6 @@ class Structure
 
 
 
-  // -------------------------------------------------------------------
-
-
-
   public function checkTableExists(string $table)
   {
     if (!in_array($table, $this->tables)) {
@@ -38,10 +34,6 @@ class Structure
       }
     }
   }
-
-
-
-  // -------------------------------------------------------------------
 
 
 

@@ -178,10 +178,6 @@ class Query
 
 
 
-  // -------------------------------------------------------------------
-
-
-
   public function getQuery(string $mode)
   {
     Utils::checkNotEmpty($mode, 'mode');

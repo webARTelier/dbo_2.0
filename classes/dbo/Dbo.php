@@ -9,17 +9,10 @@ class Dbo
 
   function __construct(array $dbAccess)
   {
-    if (empty($dbAccess)) {
-      throw new CustomException('DB access data is empty!');
-    }
-
+    utils::checkNotEmpty($dbAccess, 'DB access data');
     $this->conn = new Conn(...$dbAccess);
     $this->structure = new Structure($this->conn);
   }
-
-
-
-  // -------------------------------------------------------------------
 
 
 
