@@ -113,7 +113,7 @@ class Recordset
 
 
 
-  private function checkFieldExist(string $field)
+  private function checkFieldExists(string $field)
   {
     if (!array_key_exists($field, $this->recordset[$this->currentRow])) {
       throw new customException(
@@ -218,7 +218,7 @@ class Recordset
       );
     }
 
-    $this->checkFieldExist($field);
+    $this->checkFieldExists($field);
 
     return $this->recordset[$this->currentRow][$field];
   }
@@ -229,7 +229,7 @@ class Recordset
   {
     Utils::checkNotEmpty($field, 'field');
     Utils::checkNotEmpty($content, 'content');
-    $this->checkFieldExist($field);
+    $this->checkFieldExists($field);
 
     $rememberCurrentRow = $this->currentRow;
     $rememberEOF = $this->EOF;
