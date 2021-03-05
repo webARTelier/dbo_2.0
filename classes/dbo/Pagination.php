@@ -143,7 +143,7 @@ class Pagination
 
 
 
-  public function setCurPage(int $currentPage)
+  public function setCurrentPage(int $currentPage)
   {
     Utils::checkNotEmpty($currentPage, 'current page');
 

@@ -24,12 +24,12 @@ class Recordset
 
 
 
-  public function addPagination(Pagination $pagination, int $curPage = 1)
+  public function addPagination(Pagination $pagination, int $currentPage = 1)
   {
     $this->pagination = $pagination;
     $this->execute('count');
     $this->pagination->setTotalEntries($this->totalRows);
-    $this->pagination->setCurPage($curPage);
+    $this->pagination->setCurrentPage($currentPage);
     $this->query->setLimit($this->pagination->getLimit());
 
     if (!empty($this->pagination->getOffset())) {
