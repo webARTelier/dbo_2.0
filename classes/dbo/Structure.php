@@ -45,7 +45,7 @@ class Structure
 
   public function getColumns(string $table)
   {
-    Utils::checkNotEmpty($table);
+    Utils::checkNotEmpty($table, 'table name');
     $this->checkTableExists($table);
 
     $columns = array_column(mysqli_fetch_all($this->conn->query("SHOW COLUMNS FROM $table")), 0);

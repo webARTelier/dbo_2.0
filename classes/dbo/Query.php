@@ -62,7 +62,7 @@ class Query
 
 
 
-  public function setCols(string $cols)
+  public function setColumns(string $cols)
   {
     if (empty($this->table)) {
       throw new customException('No table set - set table before columns!');
