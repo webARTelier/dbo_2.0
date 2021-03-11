@@ -30,10 +30,6 @@ class Query
 
 
 
-  // -------------------------------------------------------------------
-
-
-
   private function checkQuery()
   {
     if (empty($this->table)) {
@@ -44,10 +40,6 @@ class Query
       throw new customException('No columns set for query!');
     }
   }
-
-
-
-  // -------------------------------------------------------------------
 
 
 
