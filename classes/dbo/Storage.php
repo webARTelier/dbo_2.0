@@ -26,10 +26,6 @@ class Storage
 
 
 
-  // -------------------------------------------------------------------
-
-
-
   private function resetInsert()
   {
     $this->insert_valTypes = '';
@@ -53,31 +49,12 @@ class Storage
   {
     $prefix = '';
 
-    foreach ($data as $fieldname => $fieldvalue) {
-      $this->insert_fields .= $prefix . $fieldname;
+    foreach ($data as $fieldName => $fieldValue) {
+      $this->insert_fields .= $prefix . $fieldName;
       $this->insert_placeholders .= $prefix . '?';
-      $this->insert_values[] = $fieldvalue;
-
+      $this->insert_values[] = $fieldValue;
+      $this->insert_valTypes .= $this->getDataType($fieldValue);
       $prefix = ',';
-
-      if (is_string($fieldvalue)) {
-        $this->insert_valTypes .= 's';
-        continue;
-      }
-
-      if (is_int($fieldvalue)) {
-        $this->insert_valTypes .= 'i';
-        continue;
-      }
-
-      if (is_float($fieldvalue)) {
-        $this->insert_valTypes .= 'd';
-        continue;
-      }
-
-      throw new customException(
-        'Unknown data format for inserting: ' . $fieldvalue
-      );
     }
   }
 
@@ -87,31 +64,29 @@ class Storage
   {
     $prefix = '';
 
-    foreach ($data as $fieldname => $fieldvalue) {
-      $this->update_placeholders .= $prefix . $fieldname . "= ?";
-      $this->update_values[] = $fieldvalue;
-
+    foreach ($data as $fieldName => $fieldValue) {
+      $this->update_placeholders .= $prefix . $fieldName . "= ?";
+      $this->update_values[] = $fieldValue;
+      $this->update_valTypes .= $this->getDataType($fieldValue);
       $prefix = ',';
-
-      if (is_string($fieldvalue)) {
-        $this->update_valTypes .= 's';
-        continue;
-      }
-
-      if (is_int($fieldvalue)) {
-        $this->update_valTypes .= 'i';
-        continue;
-      }
-
-      if (is_float($fieldvalue)) {
-        $this->update_valTypes .= 'd';
-        continue;
-      }
-
-      throw new customException(
-        'Unknown data format for updating: ' . $fieldvalue
-      );
     }
+  }
+
+
+
+  private function getDataType($data)
+  {
+    $dataTypes = array(
+      'integer' => 'i',
+      'float'   => 'd',
+      'string'  => 's'
+    );
+
+    if (key_exists(gettype($data), $dataTypes)) {
+      return ($dataTypes[gettype($data)]);
+    }
+
+    throw new customException('Unknown data type!');
   }
 
 
@@ -125,9 +100,11 @@ class Storage
 
     if (!empty($data['ID'])) {
       $this->update($data, $table, 'ID', $data['ID']);
-    } else {
-      $this->insert($data, $table);
+      return true;
     }
+
+    $this->insert($data, $table);
+    return true;
   }
 
 
@@ -166,7 +143,6 @@ class Storage
     Utils::checkNotEmpty($table, 'table');
     Utils::checkNotEmpty($condition_column, 'condition column');
     Utils::checkNotEmpty($condition_value, 'condition value');
-
     $this->structure->checkTableExists($table);
     $this->structure->checkColumnsExist($table, array_keys($data));
 
@@ -192,8 +168,8 @@ class Storage
   public function deleteRow(string $table, int $ID)
   {
     Utils::checkNotEmpty($table, 'table');
-    $this->structure->checkTableExists($table);
     Utils::checkNotEmpty($ID, 'ID');
+    $this->structure->checkTableExists($table);
 
     $delete = $this->conn->prepare("
       DELETE FROM $table
