@@ -17,7 +17,7 @@ try {
   $rs_countries = $dbo->createNewRecordset();
   $rs_countries->query
     ->setTable('country')
-    ->setCols('Code, Region')
+    ->setColUMNS('Code, Region')
     ->setCondition('Code != ?', 'test')
     ->setOrder('Code ASC');
 
@@ -25,12 +25,12 @@ try {
 
   // prepare and init pagination
   // ---------------------------
-  !empty($_GET['page'])
-    ? $page = intval($_GET['page'])
-    : $page = 1;
+  empty($_GET['page'])
+    ? $page = 1
+    : $page = intval($_GET['page']);
 
   $pagination = new Pagination;
-  $pagination->setEntriesPerPage(15);
+  $pagination->setEntriesPerPage(10);
 
   $rs_countries->addPagination($pagination, $page);
   $rs_countries->execute('select');

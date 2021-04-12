@@ -17,9 +17,9 @@ class Pagination
   {
     if ($this->totalPages > 1) {
       $this->html = '<div class="c-pagination">';
-      $this->renderBackwardItem();
-      $this->renderPageItems();
-      $this->renderForwardItem();
+      $this->html .= $this->renderBackwardItem();
+      $this->html .= $this->renderPageItems();
+      $this->html .= $this->renderForwardItem();
       $this->html .= '</div>';
     }
   }
@@ -28,97 +28,94 @@ class Pagination
 
   private function renderBackwardItem()
   {
+    $previousPage = 1;
+    $previousStatus = ' is-inactive';
+    $html = '';
+
     if ($this->currentPage > 1) {
       $previousPage = ($this->currentPage - 1);
       $previousStatus = '';
-    } else {
-      $previousPage = 1;
-      $previousStatus = ' is-inactive';
     }
 
-    $this->html .= '<div class="c-pagination__item">';
-    $this->html .= '<a class="c-pagination__link' . $previousStatus . '" ';
-    $this->html .= 'href="' . $_SERVER['PHP_SELF'] . '?' . $this->getParam . '=' . $previousPage . '">';
-    $this->html .= '&#10094;';
-    $this->html .= '</a>';
-    $this->html .= '</div>';
+    $html .= '<div class="c-pagination__item">';
+    $html .= '<a class="c-pagination__link' . $previousStatus . '" ';
+    $html .= 'href="' . $_SERVER['PHP_SELF'];
+    $html .= '?' . $this->getParam . '=' . $previousPage . '">';
+    $html .= '&#10094;';
+    $html .= '</a>';
+    $html .= '</div>';
+
+    return $html;
   }
 
 
 
   private function renderPageItems()
   {
-    for ($currentPage = 1; $currentPage <= $this->totalPages; $currentPage++) {
+    $html = '';
 
-      $renderItem = true;
+    for ($currentPage = 1; $currentPage <= $this->totalPages; $currentPage++) {
 
       $currentPage == $this->currentPage
         ? $currentStatus = ' is-active'
         : $currentStatus = '';
 
-      $cutIsSet = '!empty($this->cutLR)';
       $withinCutRangeLeft = $currentPage < ($this->currentPage - $this->cutLR) && $currentPage != 1;
       $whithinCutRangeRight = $currentPage > ($this->currentPage + $this->cutLR) && $currentPage != ($this->totalPages);
 
-      if ($cutIsSet) {
-        if ($withinCutRangeLeft) {
-          $renderItem = false;
-
-          if ($currentPage == 2) {
-            $this->html .= '<div class="c-pagination__ellipsis">…</div>';
-          }
+      if ($withinCutRangeLeft || $whithinCutRangeRight) {
+        if ($currentPage == 2 || $currentPage == $this->totalPages - 1) {
+          $html .= '<div class="c-pagination__ellipsis">…</div>';
         }
-
-        if ($whithinCutRangeRight) {
-          $renderItem = false;
-
-          if ($currentPage == $this->totalPages - 1) {
-            $this->html .= '<div class="c-pagination__ellipsis">…</div>';
-          }
-        }
+        continue;
       }
 
-      if ($renderItem) {
-        $this->html .= '<div class="c-pagination__item">';
-        $this->html .= '<a class="c-pagination__link' . $currentStatus . '" ';
-        $this->html .= 'href="' . $_SERVER['PHP_SELF'] . '?' . $this->getParam . '=' . $currentPage . '">';
-        $this->html .= $currentPage;
-        $this->html .= '</a>';
-        $this->html .= '</div>';
-      }
+      $html .= '<div class="c-pagination__item">';
+      $html .= '<a class="c-pagination__link' . $currentStatus . '" ';
+      $html .= 'href="' . $_SERVER['PHP_SELF'];
+      $html .= '?' . $this->getParam . '=' . $currentPage . '">';
+      $html .= $currentPage;
+      $html .= '</a>';
+      $html .= '</div>';
     }
+
+    return $html;
   }
 
 
 
   private function renderForwardItem()
   {
+    $nextPage = $this->totalPages;
+    $nextStatus = ' is-inactive';
+    $html = '';
+
     if ($this->currentPage < $this->totalPages) {
       $nextPage = ($this->currentPage + 1);
       $nextStatus = '';
-    } else {
-      $nextPage = $this->totalPages;
-      $nextStatus = ' is-inactive';
     }
 
-    $this->html .= '<div class="c-pagination__item">';
-    $this->html .= '<a class="c-pagination__link' . $nextStatus . '" ';
-    $this->html .= 'href="' . $_SERVER['PHP_SELF'] . '?' . $this->getParam . '=' . $nextPage . '">';
-    $this->html .= '&#10095;';
-    $this->html .= '</a>';
-    $this->html .= '</div>';
+    $html .= '<div class="c-pagination__item">';
+    $html .= '<a class="c-pagination__link' . $nextStatus . '" ';
+    $html .= 'href="' . $_SERVER['PHP_SELF'];
+    $html .=  '?' . $this->getParam . '=' . $nextPage . '">';
+    $html .= '&#10095;';
+    $html .= '</a>';
+    $html .= '</div>';
+
+    return $html;
   }
 
 
 
   private function renderCountHTML()
   {
+    $firstEntryOnPage = ($this->entriesPerPage * ($this->currentPage - 1) + 1);
+    $lastEntryOnPage = (($firstEntryOnPage + $this->entriesPerPage) - 1);
+
     if ($this->currentPage == 1) {
       $firstEntryOnPage = 1;
       $lastEntryOnPage = $this->entriesPerPage;
-    } else {
-      $firstEntryOnPage = ($this->entriesPerPage * ($this->currentPage - 1) + 1);
-      $lastEntryOnPage = (($firstEntryOnPage + $this->entriesPerPage) - 1);
     }
 
     if ($lastEntryOnPage > $this->totalEntries) {
@@ -134,19 +131,14 @@ class Pagination
 
   public function setTotalEntries(int $totalEntries)
   {
-    Utils::checkNotEmpty($totalEntries, 'total entries');
     $this->totalEntries = $totalEntries;
     $this->totalPages = ceil($this->totalEntries / $this->entriesPerPage);
-    $this->renderPaginationHtml();
-    $this->renderCountHTML();
   }
 
 
 
   public function setCurrentPage(int $currentPage)
   {
-    Utils::checkNotEmpty($currentPage, 'current page');
-
     if ($currentPage < 1) {
       $currentPage = 1;
     }
@@ -156,8 +148,6 @@ class Pagination
     }
 
     $this->currentPage = $currentPage;
-    $this->renderPaginationHtml();
-    $this->renderCountHTML();
   }
 
 
@@ -205,6 +195,7 @@ class Pagination
 
   public function getPaginationHtml()
   {
+    $this->renderPaginationHtml();
     return $this->html;
   }
 
@@ -212,6 +203,7 @@ class Pagination
 
   public function getPaginationCountHtml()
   {
+    $this->renderCountHTML();
     return $this->html_count;
   }
 }
