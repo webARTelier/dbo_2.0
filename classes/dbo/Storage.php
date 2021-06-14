@@ -79,6 +79,7 @@ class Storage
     $dataTypes = array(
       'integer' => 'i',
       'float'   => 'd',
+      'double'  => 'd',
       'string'  => 's'
     );
 
@@ -86,7 +87,7 @@ class Storage
       return ($dataTypes[gettype($data)]);
     }
 
-    throw new customException('Unknown data type!');
+    throw new customException('Unknown data type for ' . $data . '!');
   }
 
 

@@ -159,9 +159,9 @@ class Recordset
         <br>Requested row: ' . $row
           . '<br>Total rows: ' . $this->totalRows
       );
-
-      $this->currentRow = $row;
     }
+
+    $this->currentRow = $row;
   }
 
 

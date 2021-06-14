@@ -39,6 +39,10 @@ class Query
     if (empty($this->cols)) {
       throw new customException('No columns set for query!');
     }
+
+    if (empty($this->cond_placeholder)) {
+      throw new customException('No condition set for query!');
+    }
   }
 
 

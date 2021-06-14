@@ -9,7 +9,7 @@ class Dbo
 
   function __construct(array $dbAccess)
   {
-    utils::checkNotEmpty($dbAccess, 'DB access data');
+    Utils::checkNotEmpty($dbAccess, 'DB access data');
     $this->conn = new Conn(...$dbAccess);
     $this->structure = new Structure($this->conn);
   }

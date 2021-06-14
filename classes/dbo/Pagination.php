@@ -13,6 +13,14 @@ class Pagination
 
 
 
+  public function getPaginationHtml()
+  {
+    $this->renderPaginationHtml();
+    return $this->html;
+  }
+
+
+
   private function renderPaginationHtml()
   {
     if ($this->totalPages > 1) {
@@ -108,6 +116,14 @@ class Pagination
 
 
 
+  public function getPaginationCountHtml()
+  {
+    $this->renderCountHTML();
+    return $this->html_count;
+  }
+
+
+
   private function renderCountHTML()
   {
     $firstEntryOnPage = ($this->entriesPerPage * ($this->currentPage - 1) + 1);
@@ -189,21 +205,5 @@ class Pagination
       : $offset = 0;
 
     return $offset;
-  }
-
-
-
-  public function getPaginationHtml()
-  {
-    $this->renderPaginationHtml();
-    return $this->html;
-  }
-
-
-
-  public function getPaginationCountHtml()
-  {
-    $this->renderCountHTML();
-    return $this->html_count;
   }
 }
